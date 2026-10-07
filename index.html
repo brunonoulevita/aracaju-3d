@@ -18,7 +18,7 @@ h1{margin:4px 0;color:var(--a)}
 #cam{position:fixed;right:6px;top:calc(env(safe-area-inset-top,0px) + 74px);display:flex;flex-direction:column;gap:6px}
 #cam button{padding:0;width:44px;height:44px;font-size:20px;border-radius:50%;background:#000a;color:#fff}
 #pos{position:fixed;left:50%;top:30%;width:230px;transform:translate(-50%,-20px) perspective(700px) rotateX(10deg);opacity:0;pointer-events:none;transition:.3s;z-index:4}
-#pos.show{opacity:1;transform:translate(-50%,0) perspective(700px) rotateX(10deg)}
+#pos.show{opacity:1;pointer-events:auto;transform:translate(-50%,0) perspective(700px) rotateX(10deg)}
 #pcard{position:absolute;left:10px;top:-64px;width:150px;height:94px;border-radius:10px;padding:8px;box-sizing:border-box;font:700 10px system-ui;color:#fff;box-shadow:0 2px 8px #0008;line-height:1.3}
 #pcard s{display:block;width:24px;height:17px;border-radius:3px;background:linear-gradient(135deg,#f5d77a,#b8902a);margin:2px 0 4px}
 #pcard.swipe{animation:sw 1.2s ease-in-out}
@@ -77,7 +77,7 @@ h1{margin:4px 0;color:var(--a)}
 #btns button:active:not(:disabled){transform:scale(.95)}
 #btns button:disabled{opacity:.3;filter:grayscale(.8)}
 #roll{background:linear-gradient(#ffd54a,#f2a900);color:#3a2a00!important;font-size:17px!important;padding:14px 22px!important}
-#buy{background:linear-gradient(#4ec96a,#1f8a3b)}#build{background:linear-gradient(#4aa3ff,#1d5fd1)}#end{background:linear-gradient(#7b8794,#4b5563)}
+#buy{background:linear-gradient(#4ec96a,#1f8a3b)}#build{background:linear-gradient(#4aa3ff,#1d5fd1)}#trade{background:linear-gradient(#ffb74d,#e67e22)}#end{background:linear-gradient(#7b8794,#4b5563)}
 #cam button{background:rgba(15,25,40,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid #ffffff22;box-shadow:0 4px 12px #0006}
 #cbadge{display:none;position:absolute;top:2px;right:4px;width:9px;height:9px;border-radius:50%;background:#e53935;box-shadow:0 0 0 2px #0d1b2e}
 #chat{position:fixed;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 150px);width:250px;max-width:66vw;height:0;overflow:hidden;background:rgba(13,23,38,.82);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid #ffffff22;border-radius:14px;box-shadow:0 10px 24px #0007;transition:height .22s ease;z-index:3;display:flex;flex-direction:column}
@@ -113,6 +113,15 @@ h1{margin:4px 0;color:var(--a)}
 #cfm .box{background:linear-gradient(#1b2d44,#10243a);border:1px solid #ffffff22;border-radius:18px;padding:20px;max-width:340px;text-align:center;box-shadow:0 20px 50px #000a}
 #cfm h3{margin:0 0 8px;font-size:20px}#cfm p{opacity:.8;margin:0 0 16px}
 #cfm .btns{display:flex;gap:8px}#cfm button{flex:1;padding:12px 8px}
+#tradeSel{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:9;padding:16px}
+#tradeSel .box{position:relative;background:linear-gradient(#1b2d44,#10243a);border:1px solid #ffffff22;border-radius:18px;padding:20px;max-width:380px;width:100%;max-height:78vh;overflow:auto;box-shadow:0 20px 50px #000a}
+#tradeSel h3{margin:0 0 10px;font-size:19px}
+.tr-lbl{font-size:11px;opacity:.7;margin:10px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+.tr-wrap{display:flex;flex-wrap:wrap;gap:7px}
+.tr-chip{border:2px solid var(--c,#fff3);background:#ffffff0d;color:#fff;border-radius:10px;padding:7px 11px;font-size:12px;font-weight:600}
+.tr-chip.on{background:var(--c,#2447b5);box-shadow:0 0 0 2px #fff6}
+#trNext{width:100%;margin-top:16px;padding:12px;background:linear-gradient(#ffb74d,#e67e22);color:#2a1700;font-weight:700;border-radius:12px}
+#trNext:disabled{opacity:.35}
 #propm{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:9;padding:16px}
 #propm .box{position:relative;background:linear-gradient(#1b2d44,#10243a);border:1px solid #ffffff22;border-radius:18px;padding:20px;max-width:380px;width:100%;max-height:70vh;overflow:auto;box-shadow:0 20px 50px #000a}
 #propm h3{margin:0 0 14px;font-size:19px}
@@ -147,13 +156,17 @@ h1{margin:4px 0;color:var(--a)}
 #c7{background:rgba(198,40,40,.75)!important}
 </style></head><body>
 <div id="hudtop"><div id="top"></div><div id="tile"></div></div>
-<div id="bot"><div id="log">Arraste para girar · pinça/scroll para zoom</div><div id="btns"><button id="roll">🎲 Jogar dados</button><button id="buy">🛒 Comprar</button><button id="build">🏗️ Construir</button><button id="end">⏭️ Encerrar</button></div></div>
+<div id="bot"><div id="log">Arraste para girar · pinça/scroll para zoom</div><div id="btns"><button id="roll">🎲 Jogar dados</button><button id="buy">🛒 Comprar</button><button id="build">🏗️ Construir</button><button id="trade">🤝 Negociar</button><button id="end">⏭️ Encerrar</button></div></div>
 <div id="cam"><button id="c1" title="Visão geral">🗺️</button><button id="c2" title="Visão de cima">⬇️</button><button id="c3" title="Seguir jogador">🎯</button><button id="c4" title="Girar">↻</button><button id="c5" title="Modo drone">🚁</button><button id="c6" title="Voz" style="display:none">🎙️</button><button id="c8" title="Chat" style="display:none;position:relative">💬<i id="cbadge"></i></button><button id="c7" title="Sair da partida">🚪</button></div>
 <div id="pip"><canvas id="pipc"></canvas></div>
 <div id="propm"><div class="box"><button id="prClose">✕</button><h3 id="prTitle"></h3><div id="prList"></div><div id="prGroups"></div></div></div>
 <div id="cardm"><div class="box"><h3 id="cmTitle"></h3><div id="cmCards"></div></div></div>
 <div id="cfm"><div class="box"><h3>🚪 Sair da partida?</h3><p id="cfmt"></p><div class="btns"><button id="cno">Continuar jogando</button><button id="cyes">Sim, sair</button></div></div></div>
 <div id="chat"><div id="chatMsgs"></div><div id="chatRow"><input id="chatIn" maxlength="140" placeholder="Mensagem para a sala…"><button id="chatSend">➤</button></div></div>
+<div id="tradeSel"><div class="box"><button id="trClose">✕</button><h3>🤝 Negociar propriedade</h3>
+<p class="tr-lbl">Qual propriedade você quer vender?</p><div id="trProps" class="tr-wrap"></div>
+<p class="tr-lbl">Para qual jogador?</p><div id="trBuyers" class="tr-wrap"></div>
+<button id="trNext" disabled>Avançar para o pagamento</button></div></div>
 <div id="cred">© 2026 · Bruno Levita</div>
 <div id="pos"><div id="prc"></div><div id="pcard"></div><div id="pbody"><div id="pled"></div><div id="pbrand">AracajuPay</div><div id="pscr"><small id="pdesc"></small><b id="pamt"></b><em id="pok"></em></div><div id="pkeys"></div></div></div>
 <div id="menu"><div class="wrap"><div class="logo">🏙️</div><h1>ARACAJU <span>3D</span></h1><p class="sub">Compre ruas, construa casas e arranha-céus e domine a capital de Sergipe.</p><div class="seg" id="mode"><button data-m="0" class="on">📱 Neste aparelho</button><button data-m="1">🌐 Online</button></div>
@@ -291,9 +304,9 @@ const grp=g=>T.filter(t=>t.g===g),hc=t=>50+t.g*25;
 const elig=p=>T.filter(t=>t.ty=='p'&&t.own==p.id&&t.h<5&&grp(t.g).every(u=>u.own==p.id&&u.h>=t.h)&&p.money>=hc(t)).sort((a,b)=>a.h-b.h||a.g-b.g);
 function hud(){$('top').innerHTML=P.map((p,i)=>`<div class="chip ${i==cur?'on':''} ${p.out?'out':''}" style="--pc:${PC[i]}" data-pid="${i}"><i></i><div><b>${esc(p.name)}</b><span>${fm(p.money)}</span></div><em>${T.filter(t=>t.own==i).length}🏠</em></div>`).join('');
  [...$('top').children].forEach(el=>el.onclick=()=>showProps(P[+el.dataset.pid]));
- const p=P[cur],h=p&&ctl(p)&&!busy&&!over;
+ const p=P[cur],h=p&&ctl(p)&&!busy&&!over&&!tradeCtx;
  $('roll').disabled=!(h&&ph=='roll');$('buy').disabled=!(h&&ph=='act'&&pend&&p.money>=pend.pr);$('buy').textContent=pend?'🛒 Comprar '+fm(pend.pr):'🛒 Comprar';
- $('build').disabled=!(h&&elig(p).length);$('end').disabled=!(h&&ph=='act')}
+ $('build').disabled=!(h&&elig(p).length);$('trade').disabled=!(h&&ph=='act'&&T.some(t=>t.own==p.id));$('end').disabled=!(h&&ph=='act')}
 function tinfo(i){const t=T[i],o=t.own>=0?P[t.own]:null;$('tile').style.setProperty('--tc',t.col||'#888');$('tile').innerHTML=`<b>📍 ${t.n}</b><span>${t.pr?fm(t.pr):''}${t.h?' · '+(t.h==5?'Arranha-céu':t.h+' casa(s)'):''}</span><em>${o?'Dono: '+esc(o.name):t.pr?'À venda':''}</em>`}
 async function hop(p,to,hg=.35,du=300){tinfo(p.pos);const a=p.m.position.clone(),[bx,bz]=lane(p.pos,p.id);p.m.rotation.y=Math.atan2(bx-a.x,bz-a.z);
  const u=p.m.userData,sd=p.sd=-(p.sd||1);await anim(du,t=>{p.m.position.set(a.x+(bx-a.x)*t,.26+Math.sin(t*Math.PI)*hg,a.z+(bz-a.z)*t);const w=Math.sin(t*Math.PI)*.45*sd;u.ll.rotation.x=w;u.rl.rotation.x=-w;u.la.rotation.x=-w;u.ra.rotation.x=w});u.ll.rotation.x=u.rl.rotation.x=u.la.rotation.x=u.ra.rotation.x=0;beep(300+p.pos*8,.06)}
@@ -309,7 +322,39 @@ async function show(t){if(t.hg)S.remove(t.hg);const g=t.hg=new THREE.Group();g.p
 async function buy(p){const t=T[p.pos];await pay(p,t.pr,null,'Compra: '+t.n);setOwner(t,p.id);tinfo(p.pos);pend=null;beep(660);log(p.name+' comprou '+t.n)}
 async function build(p){const t=elig(p)[0];if(!t)return;await pay(p,hc(t),null,'Obra: '+t.n);t.h++;beep(520);log(p.name+(t.h==5?' construiu um HOTEL em ':' construiu casa em ')+t.n);await show(t)}
 const rent=(t,d)=>t.ty=='R'?25*2**(T.filter(u=>u.ty=='R'&&u.own==t.own).length-1):t.ty=='U'?d*(T.filter(u=>u.ty=='U'&&u.own==t.own).length>1?10:4):Math.round(t.pr/10)*[1,3,6,10,14,22][t.h];
-$('pkeys').innerHTML=[1,2,3,4,5,6,7,8,9,'✕',0,'✓'].map(k=>`<span class="${k=='✕'?'r':k=='✓'?'g':''}">${k}</span>`).join('');
+$('pkeys').innerHTML=[1,2,3,4,5,6,7,8,9,'✕',0,'✓'].map(k=>`<span class="${k=='✕'?'r':k=='✓'?'g':''}" data-k="${k}">${k}</span>`).join('');
+$('pkeys').onclick=e=>{const el=e.target.closest('span[data-k]');if(!el||!tradeCtx)return;const k=el.dataset.k;
+ if(k=='✕'){cancelTrade();return}
+ if(k=='✓'){confirmTrade();return}
+ if(tradeAmt.length<7)tradeAmt+=k;$('pamt').textContent=tradeAmt?fm(+tradeAmt):'R$ 0'};
+let tradeCtx=null,tradeAmt='';
+function openTrade(){const p=P[cur];if(!ctl(p))return;const mine=T.filter(t=>t.own==p.id);
+ if(!mine.length){alert('Você não tem propriedades para negociar.');return}
+ let selP=null,selB=null;
+ $('trProps').innerHTML=mine.map((t,i)=>`<button class="tr-chip" data-i="${i}" style="--c:${t.col}">${esc(t.n)}</button>`).join('');
+ const others=P.filter(q=>q!=p&&!q.out);
+ if(!others.length){alert('Não há outro jogador para negociar.');return}
+ $('trBuyers').innerHTML=others.map(q=>`<button class="tr-chip" data-id="${q.id}" style="--c:${PC[q.id]}">${esc(q.name)}</button>`).join('');
+ [...$('trProps').children].forEach((b,i)=>b.onclick=()=>{[...$('trProps').children].forEach(x=>x.classList.remove('on'));b.classList.add('on');selP=mine[i];$('trNext').disabled=!(selP&&selB)});
+ [...$('trBuyers').children].forEach(b=>b.onclick=()=>{[...$('trBuyers').children].forEach(x=>x.classList.remove('on'));b.classList.add('on');selB=P[+b.dataset.id];$('trNext').disabled=!(selP&&selB)});
+ $('trNext').disabled=true;
+ $('trNext').onclick=()=>{$('tradeSel').style.display='none';startTrade(selB,selP)};
+ $('tradeSel').style.display='flex'}
+$('trade').onclick=openTrade;$('trClose').onclick=()=>{$('tradeSel').style.display='none'};
+function startTrade(buyer,tile){tradeCtx={buyer,tile};tradeAmt='';
+ $('pcard').className='';$('pcard').style.background=`linear-gradient(135deg,${PC[buyer.id]},#222)`;
+ $('pcard').innerHTML=`<s></s>${esc(buyer.name.toUpperCase())}<br><small>•••• •••• •••• ${1000+buyer.id*1111}</small><br><small>VÁLIDO 12/30</small>`;
+ $('prc').innerHTML='';$('prc').className='';
+ $('pdesc').textContent='Negociação: '+tile.n;$('pamt').textContent='R$ 0';$('pok').textContent='Digite o valor e confirme';
+ $('pos').className='show trade'}
+function cancelTrade(){tradeCtx=null;tradeAmt='';$('pos').className='';log('Negociação cancelada.')}
+async function confirmTrade(){if(!tradeCtx||!tradeAmt)return;const amt=+tradeAmt,{buyer,tile}=tradeCtx;
+ if(amt<=0)return;if(buyer.money<amt){$('pok').textContent='Saldo insuficiente!';beep(160,.2);return}
+ $('pos').className='';act('t',{ti:tile.i,bi:buyer.id,amt});tradeCtx=null;tradeAmt=''}
+async function doTrade(v){const tile=T[v.ti],buyer=P.find(x=>x.id==v.bi),seller=P[cur];
+ if(!tile||!buyer||tile.own!=seller.id||buyer.money<v.amt||v.amt<=0)return;
+ busy=true;hud();await pay(buyer,v.amt,seller,'Negociação: '+tile.n);setOwner(tile,buyer.id);
+ log(`${seller.name} vendeu ${tile.n} para ${buyer.name} por ${fm(v.amt)}`);busy=false;hud()}
 async function pos(p,amt,desc,to){const e=$('pos'),c=$('pcard');c.style.background=`linear-gradient(135deg,${PC[p.id]},#222)`;c.innerHTML=`<s></s>${p.name.toUpperCase()}<br><small>•••• •••• •••• ${1000+p.id*1111}</small><br><small>VÁLIDO 12/30</small>`;$('pamt').textContent=fm(amt);$('pdesc').textContent=desc+(to?' → '+to.name:'');$('pok').textContent='Insira o cartão…';$('prt'||'prc');$('prc').innerHTML=`ARACAJU<br>${p.name}<br>${desc}<br><b>${fm(amt)}</b><br>APROVADO`;e.className='show';await sleep(500);c.className='swipe';await sleep(600);$('pok').textContent='Processando…';beep(500,.05);await sleep(600);e.className='show ok';$('pok').textContent='✔ APROVADO';beep(880,.15);$('prc').className='print';await sleep(1300);e.className='';c.className='';$('prc').className=''}
 async function pay(p,amt,to,d){await pos(p,amt,d||'Pagamento',to);const a=p.money;await anim(500,t=>{p.money=Math.round(a-amt*t);hud()});p.money=a-amt;if(to)to.money+=amt;beep(180);if(p.money<0)bust(p,to);hud()}
 function bust(p,to){if(p.out)return;p.out=true;p.m.visible=false;p.money=0;log(p.name+' faliu!');
@@ -411,7 +456,7 @@ async function doBuild(){busy=true;hud();await build(P[cur]);busy=false;hud()}
 function act(c,v){if(online){myAct=[...myAct,[++aseq,c,v]].slice(-10);room.presence({A:myAct})}Q.push({s:online?me:undefined,c,v})}
 const okp=e=>e.c=='r'?ph=='roll':e.c=='c'?ph!='wait':ph=='act';
 setInterval(()=>{if(P.length&&cardWait){const i=Q.findIndex(e=>e.s===P[cur].rid&&e.c=='k');if(i>=0){const e=Q.splice(i,1)[0],cw=cardWait;cardWait=null;cw.res(cw.four[e.v])}}
- if(busy||over||!P.length)return;const i=Q.findIndex(e=>e.s===P[cur].rid&&okp(e));if(i<0){while(Q.length>30)Q.shift();return}const e=Q.splice(i,1)[0];({r:doRoll,e:end,b:doBuy,c:doBuild})[e.c]()},150);
+ if(busy||over||!P.length)return;const i=Q.findIndex(e=>e.s===P[cur].rid&&okp(e));if(i<0){while(Q.length>30)Q.shift();return}const e=Q.splice(i,1)[0];({r:doRoll,e:end,b:doBuy,c:doBuild,t:doTrade})[e.c](e.v)},150);
 function pub(x={}){const c=cards[0],[s,h,sh]=c.querySelectorAll('input[type=color]');let f=null;if(c.photo){const[k,y]=cv(48);y.drawImage(c.photo,0,0,48,48);f=k.toDataURL('image/jpeg',.5);if(f.length>2600)f=null}
  return room.presence({nm:c.querySelector('.nm').value.trim().slice(0,14)||'Jogador',sk:s.value,hr:h.value,sh:sh.value,gl:c.querySelector('.gl').checked?1:0,ph:f,...x})}
 async function joinRoom(code,host){if(!window.claude){alert('Modo online indisponível aqui.');return}
