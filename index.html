@@ -97,11 +97,18 @@ h1{margin:4px 0;color:var(--a)}
 @media(min-width:700px){#pos{top:22%;transform-origin:top center;transform:translate(-50%,-20px) perspective(700px) rotateX(10deg) scale(1.6)}#pos.show{transform:translate(-50%,0) perspective(700px) rotateX(10deg) scale(1.6)}}
 .foot{text-align:center;opacity:.55;font-size:12px;margin-top:22px}
 #cred{position:fixed;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 1px);font-size:9px;opacity:.5;pointer-events:none;z-index:1;text-shadow:0 1px 2px #000}
+#cfm{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:9;padding:16px}
+#cfm .box{background:linear-gradient(#1b2d44,#10243a);border:1px solid #ffffff22;border-radius:18px;padding:20px;max-width:340px;text-align:center;box-shadow:0 20px 50px #000a}
+#cfm h3{margin:0 0 8px;font-size:20px}#cfm p{opacity:.8;margin:0 0 16px}
+#cfm .btns{display:flex;gap:8px}#cfm button{flex:1;padding:12px 8px}
+#cyes{background:linear-gradient(#ef5350,#c62828);color:#fff}#cno{background:#ffffff22;color:#fff}
+#c7{background:rgba(198,40,40,.75)!important}
 </style></head><body>
 <div id="hudtop"><div id="top"></div><div id="tile"></div></div>
 <div id="bot"><div id="log">Arraste para girar · pinça/scroll para zoom</div><div id="btns"><button id="roll">🎲 Jogar dados</button><button id="buy">🛒 Comprar</button><button id="build">🏗️ Construir</button><button id="end">⏭️ Encerrar</button></div></div>
-<div id="cam"><button id="c1" title="Visão geral">🗺️</button><button id="c2" title="Visão de cima">⬇️</button><button id="c3" title="Seguir jogador">🎯</button><button id="c4" title="Girar">↻</button><button id="c5" title="Modo drone">🚁</button><button id="c6" title="Voz" style="display:none">🎙️</button></div>
+<div id="cam"><button id="c1" title="Visão geral">🗺️</button><button id="c2" title="Visão de cima">⬇️</button><button id="c3" title="Seguir jogador">🎯</button><button id="c4" title="Girar">↻</button><button id="c5" title="Modo drone">🚁</button><button id="c6" title="Voz" style="display:none">🎙️</button><button id="c7" title="Sair da partida">🚪</button></div>
 <div id="pip"><canvas id="pipc"></canvas></div>
+<div id="cfm"><div class="box"><h3>🚪 Sair da partida?</h3><p id="cfmt"></p><div class="btns"><button id="cno">Continuar jogando</button><button id="cyes">Sim, sair</button></div></div></div>
 <div id="cred">© 2026 · Bruno Levita</div>
 <div id="pos"><div id="prc"></div><div id="pcard"></div><div id="pbody"><div id="pled"></div><div id="pbrand">AracajuPay</div><div id="pscr"><small id="pdesc"></small><b id="pamt"></b><em id="pok"></em></div><div id="pkeys"></div></div></div>
 <div id="menu"><div class="wrap"><div class="logo">🏙️</div><h1>ARACAJU <span>3D</span></h1><p class="sub">Compre ruas, construa casas e arranha-céus e domine a capital de Sergipe.</p><div class="seg" id="mode"><button data-m="0" class="on">📱 Neste aparelho</button><button data-m="1">🌐 Online</button></div>
@@ -188,8 +195,8 @@ T.forEach(t=>{if(t.ty=='p')return;const g=lmk(t),w=new THREE.Group();w.position.
 const MD=[1,2,3,4,5,6].map(v=>{const[c,x]=cv(64);x.fillStyle='#fff';x.fillRect(0,0,64,64);x.fillStyle='#d00';x.font='bold 44px sans-serif';x.textAlign='center';x.fillText(v,32,48);return new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(c)})});
 const dice=[0,1].map(i=>{const d=mesh(new THREE.BoxGeometry(1,1,1),MD,i?1.1:-1.1,.62,0);d.visible=false;S.add(d);return d});
 /* utilidades */
-const anim=(d,f)=>new Promise(r=>{const s=performance.now();(function q(n){const t=Math.min(1,(n-s)/d);f(t);t<1?requestAnimationFrame(q):r()})(s)});
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let gen=0;const anim=(d,f)=>new Promise(r=>{const g0=gen,s=performance.now();(function q(n){if(g0!=gen)return;const t=Math.min(1,(n-s)/d);f(t);t<1?requestAnimationFrame(q):r()})(s)});
+const sleep=ms=>{const g0=gen;return new Promise(r=>setTimeout(()=>g0==gen&&r(),ms))};
 let au;const beep=(f=440,d=.12)=>{try{au=au||new AudioContext();const o=au.createOscillator(),g=au.createGain();o.frequency.value=f;g.gain.value=.05;o.connect(g);g.connect(au.destination);o.start();o.stop(au.currentTime+d)}catch(e){}};
 const log=s=>$('log').textContent=s;
 /* boneco */
@@ -251,7 +258,7 @@ async function land(p,d){const t=T[p.pos];
 async function rollDice(){beep(200);const v=[1+rnd()*6|0,1+rnd()*6|0];
  dice.forEach((d,i)=>{const o=[1,2,3,4,5,6].filter(x=>x!=v[i]);d.material=[o[0],o[1],v[i],o[2],o[3],o[4]].map(x=>MD[x-1]);d.visible=true});
  await anim(1100,t=>dice.forEach((d,i)=>{const u=1-t;d.rotation.set(u*18,.3+u*10*(i?1:-1),u*7);d.position.y=.62+Math.abs(Math.sin(t*9))*u*3}));return v}
-async function doRoll(){if(busy||over)return;busy=true;ph='wait';hud();const p=P[cur];const v=await rollDice(),d=v[0]+v[1];log(`${p.name} tirou ${v[0]} + ${v[1]}`);
+async function doRoll(){if(busy||over||!P.length)return;busy=true;ph='wait';hud();const p=P[cur];const v=await rollDice(),d=v[0]+v[1];log(`${p.name} tirou ${v[0]} + ${v[1]}`);
  let go=true;if(p.jail>0){if(v[0]==v[1]){p.jail=0;log('Duplas! Saiu da prisão')}else if(--p.jail==0){await pay(p,50,null,'Fiança');log('Pagou R$ 50 e saiu da prisão')}else{log('Preso... aguardando');go=false}}
  await sleep(600);p.again=false;
  if(go&&!p.out){await walk(p,d);await land(p,d);if(v[0]==v[1]&&!p.out&&!p.jail)p.again=true}
@@ -277,7 +284,7 @@ function fromPhoto(f,c){const fr=new FileReader();fr.onerror=()=>alert('Não con
  const avg=(a,b,w,h)=>{const d=y.getImageData(a,b,w,h).data,n=d.length/4;let z=[0,0,0];for(let i=0;i<d.length;i+=4)for(let j=0;j<3;j++)z[j]+=d[i+j];return'#'+z.map(v=>Math.round(v/n).toString(16).padStart(2,'0')).join('')};
  const[s1,h1,sh]=c.querySelectorAll('input[type=color]');s1.value=avg(48,54,32,22);h1.value=avg(38,4,52,14);sh.value=avg(38,108,52,16);c.querySelector('.pb').textContent='✔ Foto';av(c);room&&pub()};im.src=fr.result};fr.readAsDataURL(f)}
 function begin(cfg){P=cfg.map((c,i)=>{const p={id:i,cpu:!!c.cpu,rid:c.rid,name:c.name,money:startMoney,pos:0,jail:0,out:false};p.m=pawn({skin:c.skin,hair:c.hair,shirt:c.shirt,gl:c.gl,name:p.name,photo:c.photo},i);const L=lane(0,i);p.m.position.set(L[0],.26,L[1]);S.add(p.m);return p});
- $('menu').style.display='none';$('pip').style.display='block';cur=0;ph='roll';hud();tinfo(0);log('Vez de '+P[0].name+' — jogue os dados!');setTimeout(fireworks,700);if(P[0].cpu)setTimeout(doRoll,800)}
+ $('menu').style.display='none';$('pip').style.display='block';busy=false;over=false;pend=null;Q.length=0;cur=0;ph='roll';hud();tinfo(0);log('Vez de '+P[0].name+' — jogue os dados!');setTimeout(fireworks,700);if(P[0].cpu)setTimeout(doRoll,800)}
 $('go').onclick=()=>{const cs=cards.filter(c=>c.dataset.t!='0');if(cs.length<2)return;seed=Math.random()*1e9|0;begin(cs.map((c,i)=>{const[s,h,sh]=c.querySelectorAll('input[type=color]'),cpu=c.dataset.t=='2';return{cpu,name:c.querySelector('.nm').value.trim()||(cpu?'CPU ':'Jogador ')+(i+1),skin:s.value,hair:h.value,shirt:sh.value,gl:c.querySelector('.gl').checked,photo:c.photo}}))};
 /* ===== online: salas, ações sincronizadas e voz ===== */
 let seed=1,room=null,online=false,me,started=false,myAct=[],aseq=0,mic=null;
@@ -323,6 +330,19 @@ $('ocreate').onclick=()=>joinRoom(Math.random().toString(36).slice(2,7),true);
 $('ojoin').onclick=()=>{const c=$('ocode').value.toLowerCase().replace(/[^a-z0-9]/g,'');if(c.length<3)return alert('Digite o código da sala.');joinRoom(c,false)};
 $('oinv').onclick=async()=>{const t='Vem jogar Aracaju 3D comigo! Abra https://claude.ai/artifact/RTnzhCaHnsqHha1LVP9pAd e entre na sala com o código '+$('code').textContent;try{await navigator.clipboard.writeText(t);$('vst').textContent='Convite copiado! Cole no WhatsApp. Seus amigos precisam ter acesso ao jogo (Compartilhar › Convidar).'}catch(e){prompt('Copie o convite:',t)}};
 $('ostart').onclick=()=>{const ord=room.peers().filter(p=>p.kind=='viewer').map(p=>p.peer);room.presence({st:{sd:1+Math.random()*1e9|0,ord,cpu:+$('ocpu').value,mn:startMoney}})};
+async function exitGame(){gen++;const rm=room;room=null;online=false;started=false;myAct=[];aseq=0;Object.keys(seen).forEach(k=>delete seen[k]);Q.length=0;
+ if(rm){try{await rm.leave()}catch(e){}}
+ if(mic){mic.getTracks().forEach(t=>t.stop());mic=null}
+ Object.keys(vc).forEach(k=>{try{vc[k].close()}catch(e){}delete vc[k]});document.querySelectorAll('audio[id^="au"]').forEach(a=>a.remove());
+ P.forEach(p=>S.remove(p.m));P=[];
+ T.forEach(t=>{if(t.mk)S.remove(t.mk);if(t.hg)S.remove(t.hg);t.mk=t.hg=null;t.own=-1;t.h=0});
+ FW.forEach(f=>S.remove(f.pt));FW.length=0;dice.forEach(d=>{d.visible=false});
+ cur=0;busy=false;over=false;pend=null;ph='roll';fol=true;dr=false;az=.785;el=1;rad=58;tg.set(0,0,0);
+ $('pos').className='';$('pcard').className='';$('prc').className='';$('pip').style.display='none';$('top').innerHTML='';$('tile').innerHTML='';$('log').textContent='';$('menu').style.display='';
+ $('c6').style.display='none';$('c6').textContent='🎙️';$('mic').textContent='🎙️ Entrar na voz';$('vst').textContent='';$('onl0').style.display='';$('onl1').style.display='none';$('plist').textContent='';$('menu').scrollTop=0}
+$('c7').onclick=()=>{$('cfmt').textContent=online?'Você sairá da sala e voltará para a tela inicial. Seu boneco passará a ser controlado pelo computador para os outros jogadores.':'A partida atual será encerrada, o progresso será perdido e você voltará para a tela inicial.';$('cfm').style.display='flex'};
+$('cno').onclick=()=>{$('cfm').style.display='none'};
+$('cyes').onclick=()=>{$('cfm').style.display='none';exitGame()};
 /* câmera */
 let az=.785,el=1,rad=58;const tg=new THREE.Vector3(),ptr=new Map(),cvs=R.domElement;
 cvs.onpointerdown=e=>{cvs.setPointerCapture(e.pointerId);ptr.set(e.pointerId,e)};
