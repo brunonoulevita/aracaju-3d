@@ -112,12 +112,31 @@ h1{margin:4px 0;color:var(--a)}
 <div id="cred">© 2026 · Bruno Levita</div>
 <div id="pos"><div id="prc"></div><div id="pcard"></div><div id="pbody"><div id="pled"></div><div id="pbrand">AracajuPay</div><div id="pscr"><small id="pdesc"></small><b id="pamt"></b><em id="pok"></em></div><div id="pkeys"></div></div></div>
 <div id="menu"><div class="wrap"><div class="logo">🏙️</div><h1>ARACAJU <span>3D</span></h1><p class="sub">Compre ruas, construa casas e arranha-céus e domine a capital de Sergipe.</p><div class="seg" id="mode"><button data-m="0" class="on">📱 Neste aparelho</button><button data-m="1">🌐 Online</button></div>
-<div id="onl" class="onl" style="display:none;margin-bottom:14px"><div id="onl0"><button id="ocreate">➕ Criar sala</button><div class="or">ou entre com o código de um amigo</div><div class="jr"><input class="nm" id="ocode" placeholder="Código da sala" maxlength="8"><button id="ojoin">Entrar</button></div><p class="hint">Online: só entram pessoas logadas no claude.ai e com acesso a este jogo (Compartilhar › Convidar, como Colaborador para a voz funcionar). Cada um usa o boneco do primeiro cartão abaixo.</p></div>
+<div id="onl" class="onl" style="display:none;margin-bottom:14px"><div id="onl0"><button id="ocreate">➕ Criar sala</button><div class="or">ou entre com o código de um amigo</div><div class="jr"><input class="nm" id="ocode" placeholder="Código da sala" maxlength="8"><button id="ojoin">Entrar</button></div><p class="hint">Crie uma sala e envie o convite para seus amigos (até 6 jogadores). Cada um usa o boneco do primeiro cartão abaixo.</p></div>
 <div id="onl1" style="display:none"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">Sala <b id="code" style="font-size:22px;letter-spacing:3px"></b><button id="oinv" class="pb">📨 Convidar</button><button id="mic" class="pb">🎙️ Entrar na voz</button></div><div id="plist" style="margin:10px 0;line-height:1.8"></div><small id="vst" style="opacity:.8"></small>
 <div id="ohost" style="display:none;margin-top:8px;gap:8px;flex-wrap:wrap;align-items:center">CPUs <select id="ocpu" class="nm" style="width:70px;display:inline-block"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select> <button id="ostart">▶ Começar partida online</button></div><small id="owait">Aguardando o anfitrião iniciar…</small></div></div>
 <div class="mn"><small>💰 DINHEIRO INICIAL</small><div class="seg" id="mny"><button data-v="1000">R$ 1.000</button><button data-v="1500">R$ 1.500</button><button data-v="2500">R$ 2.500</button><button data-v="5000">R$ 5.000</button></div></div><div id="rows"></div><p class="hint">📷 Envie uma selfie para o boneco ficar parecido com você — a foto fica só no seu aparelho.<br>🎥 Câmera: arraste gira · dois dedos movem · pinça dá zoom · 🚁 modo drone</p><p class="foot">© 2026 · Desenvolvido por Bruno Levita</p></div><div class="bar"><button id="go">▶ Começar</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
+
+/* ===== FIREBASE =====
+   1) Cole abaixo a configuração do seu projeto (Firebase > Configurações do projeto > Seus apps > Config).
+   2) Veja o passo a passo completo na conversa. Esta camada imita as "salas" do claude.ai usando o Realtime Database. */
+const FIREBASE_CONFIG={apiKey:"COLE_AQUI",authDomain:"SEU-PROJETO.firebaseapp.com",databaseURL:"https://SEU-PROJETO-default-rtdb.firebaseio.com",projectId:"SEU-PROJETO",appId:"COLE_AQUI"};
+let _fb=null;
+async function fbInit(){if(_fb)return _fb;if(FIREBASE_CONFIG.apiKey=='COLE_AQUI')throw new Error('Firebase não configurado');firebase.initializeApp(FIREBASE_CONFIG);const cr=await firebase.auth().signInAnonymously();_fb={db:firebase.database(),uid:cr.user.uid};return _fb}
+window.claude={use:async()=>{const{db,uid}=await fbInit();return{join:async name=>{
+ const base=db.ref('rooms/'+name),mine=base.child('peers/'+uid),sigRef=base.child('sig/'+uid),pr=base.child('peers');
+ let peers={},cbs=[],sigcb=[],first=false;
+ const list=()=>Object.keys(peers).map(id=>({peer:id,presence:peers[id]||{},isMe:id==uid,sameTab:id==uid,kind:'viewer'}));
+ mine.onDisconnect().remove();sigRef.onDisconnect().remove();await sigRef.remove();await mine.set({t:Date.now()});
+ pr.on('value',sn=>{const n=sn.val()||{},j=[],l=[];Object.keys(n).forEach(k=>{if(!peers[k])j.push(k)});Object.keys(peers).forEach(k=>{if(!n[k])l.push(k)});peers=n;first=true;const ch={peers:list(),joined:j.map(k=>({peer:k})),left:l.map(k=>({peer:k})),updated:[]};cbs.forEach(f=>f(ch))});
+ sigRef.on('child_added',sn=>{const v=sn.val();sn.ref.remove();if(!v)return;try{const d=JSON.parse(v.j);sigcb.forEach(f=>f({data:d,isMe:false}))}catch(e){}});
+ return{presence:p=>mine.update(p),peers:()=>list(),onPeers:f=>{cbs.push(f);if(first)f({peers:list(),joined:[],left:[],updated:[]})},on:(t,f)=>{if(t=='sig')sigcb.push(f)},emit:(t,d)=>base.child('sig/'+d.to).push({from:uid,j:JSON.stringify(d)}),leave:async()=>{pr.off();sigRef.off();await Promise.all([mine.remove(),sigRef.remove()])}}}}}};
+/* ===== FIM FIREBASE ===== */
 const $=id=>document.getElementById(id),PC=['#e53935','#1e88e5','#43a047','#fb8c00','#8e24aa','#00acc1'],OX=[-.5,-.17,.17,.5];
 const NAMES="Largada,Rua Pacatuba,Sorte,Rua Capela,Imposto,Cia. do Trem,Rua Lagarto,Revés,Rua Estância,Rua Propriá,Cia. de Luz,Rua Maruim,Prisão,Rua Itabaianinha,Cia. de Ônibus,Rua Laranjeiras,Rua Itaporanga,Sorte,Rua Japaratuba,Cia. de Água,Rua Riachuelo,Av. Hermes Fontes,Cia. do Metrô,Av. Augusto Franco,Parque da Sementeira,Av. Pedro Calazans,Revés,Av. Francisco Porto,Av. Tancredo Neves,Travessia da Barra,Av. Heráclito Rollemberg,Imposto,Rua João Pessoa,Av. Rio Branco,Sorte,Av. Barão de Maruim,Vá p/ Prisão,Av. Adélia Franco,Revés,Av. Jorge Amado,Cia. do Bonde,Av. Ivo do Prado,Praça Fausto Cardoso,Cia. de Gás,Av. Santos Dumont,Cia. Aérea,Orla de Atalaia,Av. Beira Mar".split(',');
 const TY="SpCpTRpCppUpJpRppCpUppRpFpCppRpTppCpGpCpRppUpRpp";
@@ -299,7 +318,7 @@ setInterval(()=>{if(busy||over||!P.length)return;const i=Q.findIndex(e=>e.s===P[
 function pub(x={}){const c=cards[0],[s,h,sh]=c.querySelectorAll('input[type=color]');let f=null;if(c.photo){const[k,y]=cv(48);y.drawImage(c.photo,0,0,48,48);f=k.toDataURL('image/jpeg',.5);if(f.length>2600)f=null}
  return room.presence({nm:c.querySelector('.nm').value.trim().slice(0,14)||'Jogador',sk:s.value,hr:h.value,sh:sh.value,gl:c.querySelector('.gl').checked?1:0,ph:f,...x})}
 async function joinRoom(code,host){if(!window.claude){alert('Modo online indisponível aqui.');return}
- try{const R0=await claude.use('room');if(!R0)throw 0;room=await R0.join('cv-'+code)}catch(e){alert('Não consegui abrir a sala online. É preciso estar logado no claude.ai e ter acesso a este jogo.');room=null;return}
+ try{const R0=await claude.use('room');if(!R0)throw 0;room=await R0.join('cv-'+code)}catch(e){alert('Não consegui conectar à sala online. Verifique a internet e a configuração do Firebase (veja o console do navegador).');room=null;return}
  online=true;$('code').textContent=code.toUpperCase();$('onl0').style.display='none';$('onl1').style.display='block';$('c6').style.display='';
  room.onPeers(onPeers);room.on('sig',onSig);await pub(host?{ho:1}:{});cards[0].addEventListener('input',()=>pub())}
 async function startOnline(st,ps){started=true;seed=st.sd;startMoney=st.mn;
@@ -313,7 +332,7 @@ function onPeers(ch){const ps=ch.peers.filter(p=>p.kind=='viewer'),mp=ps.find(p=
  ch.left.forEach(l=>{const p=P.find(x=>x.rid==l.peer);if(p&&!p.cpu){p.cpu=true;p.rid=undefined;const o=vc[l.peer];o&&o.close();delete vc[l.peer];if(P[cur]===p&&!busy&&!over){ph=='roll'?doRoll():cpuAct(p)}}});
  voice(ps)}
 /* voz (WebRTC, malha entre jogadores; sinalização pela sala) */
-function sg(to,d){room.emit('sig',{to,from:me,...d}).catch(()=>{$('vst').textContent='Voz indisponível: peça ao anfitrião para te convidar como Colaborador.'})}
+function sg(to,d){room.emit('sig',{to,from:me,...d}).catch(()=>{$('vst').textContent='Falha ao enviar o sinal de voz. Verifique as regras do Firebase.'})}
 function mkpc(id){const pc=new RTCPeerConnection(ICE);vc[id]=pc;pc.pend=[];mic.getTracks().forEach(t=>pc.addTrack(t,mic));pc.onicecandidate=e=>e.candidate&&sg(id,{c:e.candidate.toJSON()});
  pc.ontrack=e=>{let a=document.getElementById('au'+id);if(!a){a=document.createElement('audio');a.id='au'+id;a.autoplay=true;document.body.append(a)}a.srcObject=e.streams[0]};return pc}
 async function onSig(m){const d=m.data;if(!d||d.to!==me||!mic||m.isMe)return;let pc=vc[d.from];
@@ -328,7 +347,7 @@ $('mic').onclick=$('c6').onclick=joinVoice;
 document.querySelectorAll('#mode button').forEach(b=>b.onclick=()=>{const m=b.dataset.m=='1';document.querySelectorAll('#mode button').forEach(x=>x.classList.toggle('on',x==b));$('onl').style.display=m?'block':'none';cards.forEach((c,i)=>c.style.display=m&&i?'none':'');$('go').parentNode.style.display=m?'none':''});
 $('ocreate').onclick=()=>joinRoom(Math.random().toString(36).slice(2,7),true);
 $('ojoin').onclick=()=>{const c=$('ocode').value.toLowerCase().replace(/[^a-z0-9]/g,'');if(c.length<3)return alert('Digite o código da sala.');joinRoom(c,false)};
-$('oinv').onclick=async()=>{const t='Vem jogar Aracaju 3D comigo! Abra https://claude.ai/artifact/RTnzhCaHnsqHha1LVP9pAd e entre na sala com o código '+$('code').textContent;try{await navigator.clipboard.writeText(t);$('vst').textContent='Convite copiado! Cole no WhatsApp. Seus amigos precisam ter acesso ao jogo (Compartilhar › Convidar).'}catch(e){prompt('Copie o convite:',t)}};
+$('oinv').onclick=async()=>{const t='Vem jogar Aracaju 3D comigo! Abra '+location.origin+location.pathname+'?sala='+$('code').textContent.toLowerCase()+' e entre na sala com o código '+$('code').textContent;try{await navigator.clipboard.writeText(t);$('vst').textContent='Convite copiado! Cole no WhatsApp.'}catch(e){prompt('Copie o convite:',t)}};
 $('ostart').onclick=()=>{const ord=room.peers().filter(p=>p.kind=='viewer').map(p=>p.peer);room.presence({st:{sd:1+Math.random()*1e9|0,ord,cpu:+$('ocpu').value,mn:startMoney}})};
 async function exitGame(){gen++;const rm=room;room=null;online=false;started=false;myAct=[];aseq=0;Object.keys(seen).forEach(k=>delete seen[k]);Q.length=0;
  if(rm){try{await rm.leave()}catch(e){}}
@@ -362,4 +381,5 @@ $('c1').onclick=()=>view(.785,1,58,false,Z);$('c2').onclick=()=>view(az,.1,50,fa
  for(let k=FW.length-1;k>=0;k--){const f=FW[k],a=f.pt.geometry.attributes.position;f.t+=dt;for(let i=0;i<f.vel.length/3;i++){f.vel[i*3+1]-=2.2*dt;a.array[i*3]+=f.vel[i*3]*dt;a.array[i*3+1]+=f.vel[i*3+1]*dt;a.array[i*3+2]+=f.vel[i*3+2]*dt}a.needsUpdate=true;f.pt.material.opacity=Math.max(0,1-f.t/1.8);if(f.t>1.8){S.remove(f.pt);f.pt.geometry.dispose();f.pt.material.dispose();FW.splice(k,1)}}
  if(fol)tg.lerp(P.length?P[cur].m.position:Z,dr?.12:.06);
  C.position.set(tg.x+rad*Math.sin(el)*Math.sin(az),tg.y+rad*Math.cos(el),tg.z+rad*Math.sin(el)*Math.cos(az));if(dr)C.position.y+=Math.sin(performance.now()/500)*.15;C.lookAt(tg);R.render(S,C);if(P.length)R2.render(S,C2)})();
+const _q=new URLSearchParams(location.search).get('sala');if(_q){document.querySelector('#mode button[data-m="1"]').click();$('ocode').value=_q}
 </script></body></html>
