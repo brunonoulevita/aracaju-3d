@@ -125,7 +125,7 @@ h1{margin:4px 0;color:var(--a)}
 /* ===== FIREBASE =====
    1) Cole abaixo a configuração do seu projeto (Firebase > Configurações do projeto > Seus apps > Config).
    2) Veja o passo a passo completo na conversa. Esta camada imita as "salas" do claude.ai usando o Realtime Database. */
-const FIREBASE_CONFIG={apiKey:"COLE_AQUI",authDomain:"SEU-PROJETO.firebaseapp.com",databaseURL:"https://SEU-PROJETO-default-rtdb.firebaseio.com",projectId:"SEU-PROJETO",appId:"COLE_AQUI"};
+const FIREBASE_CONFIG={apiKey:"AIzaSyBcaWOkjQP4M026SmHdXXwPZjVtxRli83c",authDomain:"aracaju-3d.firebaseapp.com",databaseURL:"https://aracaju-3d-default-rtdb.firebaseio.com",projectId:"aracaju-3d",storageBucket:"aracaju-3d.firebasestorage.app",messagingSenderId:"639286536576",appId:"1:639286536576:web:c9860ac29eda9d5b86f965"};
 let _fb=null;
 async function fbInit(){if(_fb)return _fb;if(FIREBASE_CONFIG.apiKey=='COLE_AQUI')throw new Error('Firebase não configurado');firebase.initializeApp(FIREBASE_CONFIG);const cr=await firebase.auth().signInAnonymously();_fb={db:firebase.database(),uid:cr.user.uid};return _fb}
 window.claude={use:async()=>{const{db,uid}=await fbInit();return{join:async name=>{
