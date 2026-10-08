@@ -303,7 +303,10 @@ function lmk(t){const g=new THREE.Group(),a=t.ty,i=t.i;
 T.forEach(t=>{if(t.ty=='p')return;const g=lmk(t),w=new THREE.Group();w.position.set(t.pos.x,.26,t.pos.z);w.rotation.y=rt(t.i);const cr=t.i%12==0;if(cr)g.scale.setScalar(.8);g.position.z=cr?-.1:-.2;w.add(g);S.add(w);{const q=tag(t.n,t.col);q.position.set(t.pos.x,{S:2.4,T:1.9,R:1.9,U:2,J:1.9,G:1.6,F:1.5,C:1.5}[t.ty],t.pos.z);S.add(q)}if(t.ty=='F')w.add(tr(-.3,-.65,.55,0),tr(.3,-.65,.55,0))});
 /* dados */
 const MD=[1,2,3,4,5,6].map(v=>{const[c,x]=cv(64);x.fillStyle='#efe4c8';x.fillRect(0,0,64,64);x.fillStyle='#000';x.font='bold 44px sans-serif';x.textAlign='center';x.fillText(v,32,48);return new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(c)})});
-const dice=[0,1].map(i=>{const d=mesh(new THREE.BoxGeometry(1,1,1),MD,i?1.1:-1.1,.62,0);d.visible=false;S.add(d);return d});
+function roundBox(r,seg){const g=new THREE.BoxGeometry(1,1,1,seg,seg,seg),p=g.attributes.position,n=g.attributes.normal,v=new THREE.Vector3(),c=new THREE.Vector3(),h=.5-r;
+ for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i);c.set(Math.max(-h,Math.min(h,v.x)),Math.max(-h,Math.min(h,v.y)),Math.max(-h,Math.min(h,v.z)));const d=v.clone().sub(c);if(d.lengthSq()>1e-9){d.normalize();v.copy(c).addScaledVector(d,r);n.setXYZ(i,d.x,d.y,d.z)}p.setXYZ(i,v.x,v.y,v.z)}
+ return g}
+const dice=[0,1].map(i=>{const d=mesh(roundBox(.14,6),MD,i?1.1:-1.1,.62,0);d.visible=false;S.add(d);return d});
 /* utilidades */
 let gen=0;const anim=(d,f)=>new Promise(r=>{const g0=gen,s=performance.now();(function q(n){if(g0!=gen)return;const t=Math.min(1,(n-s)/d);f(t);t<1?requestAnimationFrame(q):r()})(s)});
 const sleep=ms=>{const g0=gen;return new Promise(r=>setTimeout(()=>g0==gen&&r(),ms))};
@@ -479,7 +482,7 @@ function showProps(p){const own=T.filter(t=>t.own==p.id);
  $('propm').style.display='flex'}
 $('propm').onclick=e=>{if(e.target.id=='propm')$('propm').style.display='none'};
 $('prClose').onclick=()=>{$('propm').style.display='none'};
-async function rollDice(){beep(200);const v=[1+rnd()*6|0,1+rnd()*6|0];
+async function rollDice(){$('pip').style.display='block';beep(200);const v=[1+rnd()*6|0,1+rnd()*6|0];
  dice.forEach((d,i)=>{const o=[1,2,3,4,5,6].filter(x=>x!=v[i]);d.material=[o[0],o[1],v[i],o[2],o[3],o[4]].map(x=>MD[x-1]);d.visible=true});
  await anim(1100,t=>dice.forEach((d,i)=>{const u=1-t;d.rotation.set(u*18,.3+u*10*(i?1:-1),u*7);d.position.y=.62+Math.abs(Math.sin(t*9))*u*3}));return v}
 async function doRoll(){if(busy||over||!P.length)return;busy=true;ph='wait';hud();const p=P[cur];const v=await rollDice(),d=v[0]+v[1];log(`${p.name} tirou ${v[0]} + ${v[1]}`);
@@ -488,7 +491,7 @@ async function doRoll(){if(busy||over||!P.length)return;busy=true;ph='wait';hud(
  if(go&&!p.out){await walk(p,d);await land(p,d);if(v[0]==v[1]&&!p.out&&!p.jail)p.again=true}
  busy=false;ph='act';hud();if(over)return;if(p.out||p.cpu)setTimeout(()=>p.out?end():cpuAct(p),700)}
 async function cpuAct(p){busy=true;while(elig(p).length&&p.money>400&&!over)await build(p);busy=false;hud();await sleep(500);end()}
-function end(){if(over)return;pend=null;if(!(P[cur].again&&!P[cur].out)){do{cur=(cur+1)%P.length}while(P[cur].out)}
+function end(){if(over)return;$('pip').style.display='none';pend=null;if(!(P[cur].again&&!P[cur].out)){do{cur=(cur+1)%P.length}while(P[cur].out)}
  ph='roll';hud();if(P[cur].cpu)setTimeout(doRoll,700)}
 $('roll').onclick=()=>act('r');$('end').onclick=()=>act('e');
 $('buy').onclick=async()=>{const p=P[cur];if(!pend||!p||!ctl(p)||busy)return;busy=true;hud();const ok=await showDeed(pend,0,true);busy=false;hud();if(ok)act('b')};
@@ -508,7 +511,7 @@ function fromPhoto(f,c){const fr=new FileReader();fr.onerror=()=>alert('Não con
  const avg=(a,b,w,h)=>{const d=y.getImageData(a,b,w,h).data,n=d.length/4;let z=[0,0,0];for(let i=0;i<d.length;i+=4)for(let j=0;j<3;j++)z[j]+=d[i+j];return'#'+z.map(v=>Math.round(v/n).toString(16).padStart(2,'0')).join('')};
  const[s1,h1,sh]=c.querySelectorAll('input[type=color]');s1.value=avg(48,54,32,22);h1.value=avg(38,4,52,14);sh.value=avg(38,108,52,16);c.querySelector('.pb').textContent='✔ Foto';fixShirt(c);av(c);room&&pub()};im.src=fr.result};fr.readAsDataURL(f)}
 function begin(cfg){P=cfg.map((c,i)=>{const p={id:i,cpu:!!c.cpu,rid:c.rid,name:c.name,money:startMoney,pos:0,jail:0,out:false};p.m=pawn({skin:c.skin,hair:c.hair,shirt:c.shirt,gl:c.gl,name:p.name,photo:c.photo},i);const L=lane(0,i);p.m.position.set(L[0],.26,L[1]);S.add(p.m);return p});
- $('menu').style.display='none';$('pip').style.display='block';busy=false;over=false;pend=null;Q.length=0;cur=0;ph='roll';hud();tinfo(0);log('Vez de '+P[0].name+' — jogue os dados!');setTimeout(fireworks,700);if(P[0].cpu)setTimeout(doRoll,800)}
+ $('menu').style.display='none';$('pip').style.display='none';busy=false;over=false;pend=null;Q.length=0;cur=0;ph='roll';hud();tinfo(0);log('Vez de '+P[0].name+' — jogue os dados!');setTimeout(fireworks,700);if(P[0].cpu)setTimeout(doRoll,800)}
 $('go').onclick=()=>{const cs=cards.filter(c=>c.dataset.t!='0');if(cs.length<2)return;cs.forEach(c=>fixShirt(c));seed=Math.random()*1e9|0;begin(cs.map((c,i)=>{const[s,h,sh]=c.querySelectorAll('input[type=color]'),cpu=c.dataset.t=='2';return{cpu,name:c.querySelector('.nm').value.trim()||(cpu?'CPU ':'Jogador ')+(i+1),skin:s.value,hair:h.value,shirt:sh.value,gl:c.querySelector('.gl').checked,photo:c.photo}}))};
 /* ===== online: salas, ações sincronizadas e voz ===== */
 let seed=1,room=null,online=false,me,started=false,myAct=[],aseq=0,mic=null,iamhost=false,namedByUser=false,published=false,chatSeq=0,myChatLog=[],seenChat={},chatOpen=false;
