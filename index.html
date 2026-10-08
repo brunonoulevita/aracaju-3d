@@ -113,6 +113,14 @@ h1{margin:4px 0;color:var(--a)}
 #cfm .box{background:linear-gradient(#1b2d44,#10243a);border:1px solid #ffffff22;border-radius:18px;padding:20px;max-width:340px;text-align:center;box-shadow:0 20px 50px #000a}
 #cfm h3{margin:0 0 8px;font-size:20px}#cfm p{opacity:.8;margin:0 0 16px}
 #cfm .btns{display:flex;gap:8px}#cfm button{flex:1;padding:12px 8px}
+#debtModal{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:10;padding:16px}
+#debtModal .box{background:linear-gradient(#3a1b1b,#1f0f12);border:1px solid #ff5252aa;border-radius:18px;padding:20px;max-width:400px;width:100%;max-height:80vh;overflow:auto;box-shadow:0 20px 50px #000a}
+#debtModal h3{margin:0 0 8px;font-size:19px;color:#ff8a80}#debtModal p{font-size:13px;opacity:.85;margin:0 0 14px;line-height:1.45}
+#debtModal .db-prop{background:#ffffff0d;border-radius:12px;padding:10px;margin-bottom:8px}
+#debtModal .db-prop b{display:flex;align-items:center;gap:8px;font-size:14px;margin-bottom:8px}
+#debtModal .db-prop i{width:14px;height:14px;border-radius:4px;flex:none}
+#toast{position:fixed;left:50%;top:22%;transform:translate(-50%,-20px);background:linear-gradient(#c62828,#7a1515);color:#fff;font-weight:800;font-size:16px;padding:14px 22px;border-radius:14px;box-shadow:0 10px 30px #000a;opacity:0;pointer-events:none;transition:.35s;z-index:11;text-align:center;max-width:86vw}
+#toast.on{opacity:1;transform:translate(-50%,0)}
 #tradeSel{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:9;padding:16px}
 #tradeSel .box{position:relative;background:linear-gradient(#1b2d44,#10243a);border:1px solid #ffffff22;border-radius:18px;padding:20px;max-width:380px;width:100%;max-height:78vh;overflow:auto;box-shadow:0 20px 50px #000a}
 #tradeSel h3{margin:0 0 10px;font-size:19px}
@@ -154,6 +162,22 @@ h1{margin:4px 0;color:var(--a)}
 .cm-c.rev .cm-face{background:linear-gradient(160deg,#d32f2f,#7a1515)}
 #cyes{background:linear-gradient(#ef5350,#c62828);color:#fff}#cno{background:#ffffff22;color:#fff}
 #c7{background:rgba(198,40,40,.75)!important}
+#deed{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:12;padding:16px}
+#deedHint{color:#fff;opacity:.8;font-size:13px}
+#deedBtns{display:none;gap:10px;width:min(310px,82vw)}
+#deedBtns button{flex:1;padding:14px 8px;border-radius:14px;font-size:15px;color:#fff;font-weight:800;box-shadow:0 6px 16px #0007}
+#deedYes{background:linear-gradient(#4ec96a,#1f8a3b)}#deedNo{background:linear-gradient(#ef5350,#c62828)}
+.deed{width:min(310px,82vw);background:#f6f0df;color:#111;border:3px solid #111;border-radius:16px;padding:14px 16px 16px;font-family:"Arial Narrow","Roboto Condensed","Helvetica Neue",Arial,sans-serif;font-weight:700;box-shadow:0 22px 50px #000b,inset 0 0 0 4px #f6f0df,inset 0 0 0 5px #111;animation:deedIn .6s cubic-bezier(.2,.9,.3,1.15) both;transform:rotate(-1.5deg)}
+@keyframes deedIn{from{transform:translateY(80px) rotate(10deg) scale(.7);opacity:0}to{transform:rotate(-1.5deg);opacity:1}}
+.deed .dh{background:var(--dc);color:#fff;text-align:center;text-transform:uppercase;border:2px solid #111;border-radius:6px;padding:10px 8px;font-size:18px;letter-spacing:.5px;line-height:1.15;margin-bottom:10px}
+.deed .dprice{display:flex;justify-content:space-between;border:2px solid #111;border-radius:6px;padding:4px 10px;margin-bottom:8px;font-size:16px;text-transform:uppercase;background:#fff7dc}
+.deed .dr{display:flex;justify-content:space-between;font-size:16px;line-height:1.3;text-transform:uppercase}
+.deed .dr.dctr{justify-content:center;gap:34px;margin-bottom:2px}
+.deed .dsep{height:9px}
+.deed .dico{width:78px;height:78px;border:3px solid #111;border-radius:14px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:46px;background:#fff}
+.deed .dtitle{text-align:center;text-transform:uppercase;font-size:19px;margin-bottom:8px}
+.deed p{font-size:13px;line-height:1.35;margin:0 0 6px;text-transform:uppercase}
+.pr-row[data-ti]{cursor:pointer}
 </style></head><body>
 <div id="hudtop"><div id="top"></div><div id="tile"></div></div>
 <div id="bot"><div id="log">Arraste para girar · pinça/scroll para zoom</div><div id="btns"><button id="roll">🎲 Jogar dados</button><button id="buy">🛒 Comprar</button><button id="build">🏗️ Construir</button><button id="trade">🤝 Negociar</button><button id="end">⏭️ Encerrar</button></div></div>
@@ -167,6 +191,9 @@ h1{margin:4px 0;color:var(--a)}
 <p class="tr-lbl">Qual propriedade você quer vender?</p><div id="trProps" class="tr-wrap"></div>
 <p class="tr-lbl">Para qual jogador?</p><div id="trBuyers" class="tr-wrap"></div>
 <button id="trNext" disabled>Avançar para o pagamento</button></div></div>
+<div id="debtModal"><div class="box"><h3 id="dbTitle"></h3><p id="dbMsg"></p><div id="dbProps" class="tr-wrap"></div></div></div>
+<div id="toast"></div>
+<div id="deed"><div id="deedCard"></div><small id="deedHint"></small><div id="deedBtns"><button id="deedNo">✕ Desistir</button><button id="deedYes">✅ Confirmar compra</button></div></div>
 <div id="cred">© 2026 · Bruno Levita</div>
 <div id="pos"><div id="prc"></div><div id="pcard"></div><div id="pbody"><div id="pled"></div><div id="pbrand">AracajuPay</div><div id="pscr"><small id="pdesc"></small><b id="pamt"></b><em id="pok"></em></div><div id="pkeys"></div></div></div>
 <div id="menu"><div class="wrap"><div class="logo">🏙️</div><h1>ARACAJU <span>3D</span></h1><p class="sub">Compre ruas, construa casas e arranha-céus e domine a capital de Sergipe.</p><div class="seg" id="mode"><button data-m="0" class="on">📱 Neste aparelho</button><button data-m="1">🌐 Online</button></div>
@@ -217,15 +244,15 @@ const lane=(i,id)=>{const t=rt(i),x=LX[id],z=LZ[id];return[T[i].pos.x+x*Math.cos
 const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;document.body.prepend(R.domElement);
 const S=new THREE.Scene();S.background=new THREE.Color('#bfe3f7');S.fog=new THREE.Fog('#bfe3f7',90,200);
 const C=new THREE.PerspectiveCamera(32,1,.1,300);
-S.add(new THREE.HemisphereLight('#ffffff','#7788aa',.75));
-const L=new THREE.DirectionalLight('#fff1d6',1);L.position.set(10,22,8);L.castShadow=true;L.shadow.mapSize.set(2048,2048);Object.assign(L.shadow.camera,{left:-22,right:22,top:22,bottom:-22});L.shadow.camera.updateProjectionMatrix();S.add(L);
+S.add(new THREE.HemisphereLight('#ffffff','#7788aa',.5));
+const L=new THREE.DirectionalLight('#fff1d6',.78);L.position.set(10,22,8);L.castShadow=true;L.shadow.mapSize.set(2048,2048);Object.assign(L.shadow.camera,{left:-22,right:22,top:22,bottom:-22});L.shadow.camera.updateProjectionMatrix();S.add(L);
 const M=(c,r=.7)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
 const mesh=(g,m,x=0,y=0,z=0)=>{const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=o.receiveShadow=true;return o};
 const gnd=mesh(new THREE.PlaneGeometry(200,200),M('#7cc76a'));gnd.rotation.x=-Math.PI/2;gnd.position.y=-.4;S.add(gnd);
 S.add(mesh(new THREE.BoxGeometry(26.6,.4,26.6),M('#3b2a1a'),0,-.1,0));
 function cv(w){const c=document.createElement('canvas');c.width=c.height=w;return[c,c.getContext('2d')]}
 {const[c,x]=cv(1024),tx=new THREE.CanvasTexture(c);x.fillStyle='#2f6f3e';x.fillRect(0,0,1024,1024);
- const m=mesh(new THREE.PlaneGeometry(22,22),new THREE.MeshStandardMaterial({map:tx}));m.rotation.x=-Math.PI/2;m.position.y=.12;S.add(m);
+ const m=mesh(new THREE.PlaneGeometry(22,22),new THREE.MeshStandardMaterial({map:tx,color:0xbcbcbc,roughness:1,metalness:0}));m.rotation.x=-Math.PI/2;m.position.y=.12;S.add(m);
  const im=new Image();im.onload=()=>{const w=1024,h=Math.round(w*im.height/im.width),cw=1024*im.width/im.height;try{x.filter='blur(14px)'}catch(e){}x.drawImage(im,(w-cw)/2,0,cw,1024);x.filter='none';x.fillStyle='rgba(0,0,0,.35)';x.fillRect(0,0,1024,1024);x.drawImage(im,0,(1024-h)/2,w,h);x.strokeStyle='#fff';x.lineWidth=6;x.strokeRect(3,(1024-h)/2,w-6,h);tx.needsUpdate=true};im.src=PHOTO}
 function lab(t){const[c,x]=cv(128);x.fillStyle='#dfe9cf';x.fillRect(0,0,128,128);x.fillStyle=t.col;x.fillRect(0,0,128,t.ty=='p'?34:128);
  x.fillStyle=t.ty=='p'?'#222':'#fff';x.textAlign='center';x.font='bold 17px sans-serif';
@@ -341,25 +368,50 @@ function openTrade(){const p=P[cur];if(!ctl(p))return;const mine=T.filter(t=>t.o
  $('trNext').onclick=()=>{$('tradeSel').style.display='none';startTrade(selB,selP)};
  $('tradeSel').style.display='flex'}
 $('trade').onclick=openTrade;$('trClose').onclick=()=>{$('tradeSel').style.display='none'};
-function startTrade(buyer,tile){tradeCtx={buyer,tile};tradeAmt='';
+function startTrade(buyer,tile,cb){tradeCtx={buyer,tile,cb};tradeAmt='';
  $('pcard').className='';$('pcard').style.background=`linear-gradient(135deg,${PC[buyer.id]},#222)`;
  $('pcard').innerHTML=`<s></s>${esc(buyer.name.toUpperCase())}<br><small>•••• •••• •••• ${1000+buyer.id*1111}</small><br><small>VÁLIDO 12/30</small>`;
  $('prc').innerHTML='';$('prc').className='';
  $('pdesc').textContent='Negociação: '+tile.n;$('pamt').textContent='R$ 0';$('pok').textContent='Digite o valor e confirme';
  $('pos').className='show trade'}
-function cancelTrade(){tradeCtx=null;tradeAmt='';$('pos').className='';log('Negociação cancelada.')}
+function cancelTrade(){const cb=tradeCtx&&tradeCtx.cb;tradeCtx=null;tradeAmt='';$('pos').className='';if(cb)cb(null);else log('Negociação cancelada.')}
 async function confirmTrade(){if(!tradeCtx||!tradeAmt)return;const amt=+tradeAmt,{buyer,tile}=tradeCtx;
  if(amt<=0)return;if(buyer.money<amt){$('pok').textContent='Saldo insuficiente!';beep(160,.2);return}
- $('pos').className='';act('t',{ti:tile.i,bi:buyer.id,amt});tradeCtx=null;tradeAmt=''}
+ $('pos').className='';const cb=tradeCtx.cb;tradeCtx=null;tradeAmt='';if(cb)cb(amt);else act('t',{ti:tile.i,bi:buyer.id,amt})}
 async function doTrade(v){const tile=T[v.ti],buyer=P.find(x=>x.id==v.bi),seller=P[cur];
  if(!tile||!buyer||tile.own!=seller.id||buyer.money<v.amt||v.amt<=0)return;
  busy=true;hud();await pay(buyer,v.amt,seller,'Negociação: '+tile.n);setOwner(tile,buyer.id);
  log(`${seller.name} vendeu ${tile.n} para ${buyer.name} por ${fm(v.amt)}`);busy=false;hud()}
 async function pos(p,amt,desc,to){const e=$('pos'),c=$('pcard');c.style.background=`linear-gradient(135deg,${PC[p.id]},#222)`;c.innerHTML=`<s></s>${p.name.toUpperCase()}<br><small>•••• •••• •••• ${1000+p.id*1111}</small><br><small>VÁLIDO 12/30</small>`;$('pamt').textContent=fm(amt);$('pdesc').textContent=desc+(to?' → '+to.name:'');$('pok').textContent='Insira o cartão…';$('prt'||'prc');$('prc').innerHTML=`ARACAJU<br>${p.name}<br>${desc}<br><b>${fm(amt)}</b><br>APROVADO`;e.className='show';await sleep(500);c.className='swipe';await sleep(600);$('pok').textContent='Processando…';beep(500,.05);await sleep(600);e.className='show ok';$('pok').textContent='✔ APROVADO';beep(880,.15);$('prc').className='print';await sleep(1300);e.className='';c.className='';$('prc').className=''}
-async function pay(p,amt,to,d){await pos(p,amt,d||'Pagamento',to);const a=p.money;await anim(500,t=>{p.money=Math.round(a-amt*t);hud()});p.money=a-amt;if(to)to.money+=amt;beep(180);if(p.money<0)bust(p,to);hud()}
-function bust(p,to){if(p.out)return;p.out=true;p.m.visible=false;p.money=0;log(p.name+' faliu!');
+async function pay(p,amt,to,d){
+ if(p.money<amt){const ok=await resolveDebt(p,amt);if(!ok||p.money<amt){bust(p,to);return}}
+ await pos(p,amt,d||'Pagamento',to);const a=p.money;await anim(500,t=>{p.money=Math.round(a-amt*t);hud()});p.money=a-amt;if(to)to.money+=amt;beep(180);hud()}
+function bust(p,to){if(p.out)return;p.out=true;p.m.visible=false;p.money=0;log(p.name+' faliu!');toast('💀 '+p.name+' faliu e deixou a partida');beep(120,.4);hud();
  T.forEach(t=>{if(t.own==p.id){setOwner(t,to?to.id:-1);if(!to){t.h=0;show(t)}}});
  const al=P.filter(x=>!x.out);if(al.length==1){over=true;log('🏆 '+al[0].name+' venceu!');hud()}}
+let debtWait=null;
+function toast(m){const e=$('toast');e.textContent=m;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),3500)}
+function mortgage(p,t){const val=Math.round((t.pr||0)/2);p.money+=val;if(t.h){t.h=0;show(t)}setOwner(t,-1);log(`${p.name} hipotecou ${t.n} ao banco por ${fm(val)}`);beep(520,.15);hud()}
+function debtPick(p,need){const mine=T.filter(t=>t.own==p.id),others=P.filter(q=>q!=p&&!q.out);$('dbTitle').textContent='⚠️ Dívida — '+p.name;
+ $('dbMsg').textContent=`Você tem ${fm(p.money)} e precisa pagar ${fm(need)}. Venda propriedades até cobrir a dívida: ao banco (você recebe metade do valor, automático) ou a um jogador (você combina o valor na maquininha). Sem conseguir cobrir, você será declarado falido.`;
+ $('dbProps').innerHTML='';
+ return new Promise(res=>{mine.forEach(t=>{const d=document.createElement('div');d.className='db-prop';d.innerHTML=`<b><i style="background:${t.col}"></i>${esc(t.n)}</b>`;const w=document.createElement('div');w.className='tr-wrap';
+  const bb=document.createElement('button');bb.className='tr-chip';bb.style.setProperty('--c','#2e9e4f');bb.textContent='🏦 Banco +'+fm(Math.round((t.pr||0)/2));bb.onclick=()=>res({t,bank:true});w.append(bb);
+  others.forEach(q=>{const c=document.createElement('button');c.className='tr-chip';c.style.setProperty('--c',PC[q.id]);c.textContent='🤝 '+q.name;c.onclick=()=>res({t,buyer:q});w.append(c)});
+  d.append(w);$('dbProps').append(d)});$('debtModal').style.display='flex'})}
+async function debtShow(p,need){while(true){const sel=await debtPick(p,need);if(sel.bank)return{ti:sel.t.i,bi:-1,amt:0};
+ $('debtModal').style.display='none';const amt=await new Promise(res=>startTrade(sel.buyer,sel.t,res));if(amt)return{ti:sel.t.i,bi:sel.buyer.id,amt}}}
+async function applyDebtChoice(p,ch){const t=T[ch.ti];if(ch.bi<0){mortgage(p,t);return}
+ const b=P.find(x=>x.id==ch.bi);if(!b||t.own!=p.id||b.money<ch.amt||ch.amt<=0)return;
+ await pay(b,ch.amt,p,'Negociação: '+t.n);setOwner(t,b.id);log(`${p.name} vendeu ${t.n} para ${b.name} por ${fm(ch.amt)}`);hud()}
+async function resolveDebt(p,need){
+ while(p.money<need){const mine=T.filter(t=>t.own==p.id);if(!mine.length){$('debtModal').style.display='none';return false}
+  let ch;
+  if(p.cpu||p!==P[cur]){mine.sort((a,b)=>(b.pr||0)-(a.pr||0)||a.i-b.i);ch={ti:mine[0].i,bi:-1,amt:0};await sleep(500)}
+  else if(ctl(p)){ch=await debtShow(p,need);if(online)act('m',ch)}
+  else{ch=await new Promise(res=>{debtWait={res}})}
+  await applyDebtChoice(p,ch)}
+ $('debtModal').style.display='none';return true}
 const SORTE=[
  ['Ganhou na loteria','+R$ 100',p=>p.money+=100],
  ['Prêmio da poupança','+R$ 150',p=>p.money+=150],
@@ -385,7 +437,7 @@ const REVES=[
  ['Furto de carteira','-R$ 110',p=>pay(p,110,null,'Furto de carteira')],
 ];
 async function land(p,d){const t=T[p.pos];
- if(t.pr){if(t.own<0){pend=t;log(t.n+' está à venda por '+fm(t.pr));if(p.cpu&&p.money>t.pr+120)await buy(p)}
+ if(t.pr){if(t.own<0){pend=t;log(t.n+' está à venda por '+fm(t.pr));if(p.cpu&&p.money>t.pr+120){await showDeed(t,7000);await buy(p)}}
   else if(t.own!=p.id){const r=rent(t,d),o=P[t.own];log(`${p.name} paga ${fm(r)} de aluguel a ${o.name}`);await pay(p,r,o,'Aluguel: '+t.n)}}
  else if(t.ty=='T'){await pay(p,t.i==4?150:100,null,'Imposto');log(p.name+' pagou imposto')}
  else if(t.ty=='G'){log('Vá para a prisão!');await sendJail(p)}
@@ -404,9 +456,18 @@ function showCardModal(p,four,t,onPick,auto){const rev=t.n=='Revés';$('cmTitle'
  else setTimeout(()=>pick(Math.floor(rnd()*four.length)),900);
  $('cardm').style.display='flex'}
 function hideCardModal(){$('cardm').style.display='none'}
+const ICONS={'Cia. do Trem':'🚆','Cia. de Ônibus':'🚌','Cia. do Metrô':'🚇','Travessia da Barra':'⛴️','Cia. do Bonde':'🚋','Cia. Aérea':'✈️','Cia. de Luz':'💡','Cia. de Água':'🚰','Cia. de Gás':'🔥'};
+function deedHTML(t){const hip=fm(Math.round(t.pr/2));
+ if(t.ty=='p'){const b=Math.round(t.pr/10),m=[3,6,10,14,22],lab=['C/ 1 CASA','C/ 2 CASAS','C/ 3 CASAS','C/ 4 CASAS','C/ HOTEL'],c=hc(t),n=parseInt(t.col.slice(1),16),dk=((n>>16)*299+((n>>8)&255)*587+(n&255)*114)/1000>150;
+  return`<div class="deed" style="--dc:${t.col}"><div class="dh" style="${dk?'color:#111':''}">${esc(t.n)}</div><div class="dprice"><span>Preço</span><span>${fm(t.pr)}</span></div><div class="dr dctr"><span>Aluguel</span><span>${fm(b)}</span></div>${lab.map((l,i)=>`<div class="dr"><span>${l}</span><span>${fm(b*m[i])}</span></div>`).join('')}<div class="dsep"></div><div class="dr"><span>Cada casa</span><span>${fm(c)}</span></div><div class="dr"><span>Hotel</span><span>${fm(c)}</span></div><div class="dsep"></div><div class="dr"><span>Hipoteca</span><span>${hip}</span></div></div>`}
+ const R=t.ty=='R',cnt=T.filter(u=>u.ty==t.ty).length;
+ const body=R?`<p>Aluguel conforme a quantidade de companhias de transporte que o dono possui:</p>`+Array.from({length:cnt},(_,k)=>`<div class="dr"><span>Com ${k+1} companhia${k?'s':''}</span><span>${fm(25*2**k)}</span></div>`).join(''):`<p>Taxa a cobrar: pontos dos dados multiplicados por <b>4</b> (com 1 companhia de serviço) ou por <b>10</b> (com 2 ou mais).</p>`;
+ return`<div class="deed"><div class="dico">${ICONS[t.n]||'🏢'}</div><div class="dtitle">${esc(t.n.replace('Cia.','Companhia'))}</div>${body}<div class="dsep"></div><div class="dr"><span>Preço</span><span>${fm(t.pr)}</span></div><div class="dr"><span>Hipoteca</span><span>${hip}</span></div></div>`}
+function showDeed(t,ms,ask){return new Promise(res=>{$('deedCard').innerHTML=deedHTML(t);$('deedBtns').style.display=ask?'flex':'none';$('deedHint').textContent=ask?'Deseja comprar este local?':(ms?'Toque para continuar':'Toque para fechar');$('deed').style.display='flex';let done=false;const close=v=>{if(done)return;done=true;$('deed').style.display='none';res(v)};
+ if(ask){$('deed').onclick=null;$('deedYes').onclick=()=>close(true);$('deedNo').onclick=()=>close(false)}else{$('deed').onclick=()=>close(true);if(ms){const g0=gen;setTimeout(()=>{if(g0==gen)close(true)},ms)}}})}
 function showProps(p){const own=T.filter(t=>t.own==p.id);
  $('prTitle').textContent='🏠 '+p.name;$('prTitle').style.color=PC[p.id];
- $('prList').innerHTML=own.length?own.map(t=>`<div class="pr-row"><i style="background:${t.col}"></i><div><b>${esc(t.n)}</b><span>${t.ty=='R'?'Companhia de Transporte':t.ty=='U'?'Companhia de Serviço':'Grupo '+(t.g+1)}${t.h?' · '+(t.h==5?'Hotel':t.h+' casa(s)'):''}</span></div></div>`).join(''):'<p class="pr-empty">Ainda sem propriedades.</p>';
+ $('prList').innerHTML=own.length?own.map(t=>`<div class="pr-row" data-ti="${t.i}"><i style="background:${t.col}"></i><div><b>${esc(t.n)}</b><span>${t.ty=='R'?'Companhia de Transporte':t.ty=='U'?'Companhia de Serviço':'Grupo '+(t.g+1)}${t.h?' · '+(t.h==5?'Hotel':t.h+' casa(s)'):''}</span></div></div>`).join(''):'<p class="pr-empty">Ainda sem propriedades.</p>';[...$('prList').children].forEach(el=>{if(el.dataset.ti)el.onclick=()=>showDeed(T[+el.dataset.ti])});
  const gids=[...new Set(own.filter(t=>t.ty=='p').map(t=>t.g))].sort((a,b)=>a-b);
  $('prGroups').innerHTML=gids.length?'<h4>📊 Progresso por grupo</h4>'+gids.map(g=>{const mine=T.filter(t=>t.g==g&&t.own==p.id).length,total=GS[g],miss=total-mine,riv={};
    T.filter(t=>t.g==g&&t.own>=0&&t.own!=p.id).forEach(t=>{riv[t.own]=(riv[t.own]||0)+1});
@@ -427,7 +488,7 @@ async function cpuAct(p){busy=true;while(elig(p).length&&p.money>400&&!over)awai
 function end(){if(over)return;pend=null;if(!(P[cur].again&&!P[cur].out)){do{cur=(cur+1)%P.length}while(P[cur].out)}
  ph='roll';hud();if(P[cur].cpu)setTimeout(doRoll,700)}
 $('roll').onclick=()=>act('r');$('end').onclick=()=>act('e');
-$('buy').onclick=()=>act('b');
+$('buy').onclick=async()=>{const p=P[cur];if(!pend||!p||!ctl(p)||busy)return;busy=true;hud();const ok=await showDeed(pend,0,true);busy=false;hud();if(ok)act('b')};
 $('build').onclick=()=>act('c');
 /* menu / avatar */
 const SK=['#f1c27d','#c68642','#8d5524','#ffdbac','#e0ac69','#a47148'],HR=['#2b1b0e','#e6c35c','#b5451b','#444444','#1b1b1b','#8d6e63'];
@@ -451,12 +512,13 @@ let seed=1,room=null,online=false,me,started=false,myAct=[],aseq=0,mic=null,iamh
 const rnd=()=>{seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 const ctl=p=>online?p.rid===me:!p.cpu;
 const Q=[],seen={},vc={},ICE={iceServers:[{urls:'stun:stun.l.google.com:19302'}]};
-async function doBuy(){const p=P[cur];if(!pend||p.money<pend.pr)return;busy=true;hud();await buy(p);busy=false;hud()}
+async function doBuy(){const p=P[cur];if(!pend||p.money<pend.pr)return;busy=true;hud();if(!ctl(p))await showDeed(pend,4500);await buy(p);busy=false;hud()}
 async function doBuild(){busy=true;hud();await build(P[cur]);busy=false;hud()}
 function act(c,v){if(online){myAct=[...myAct,[++aseq,c,v]].slice(-10);room.presence({A:myAct})}Q.push({s:online?me:undefined,c,v})}
 const okp=e=>e.c=='r'?ph=='roll':e.c=='c'?ph!='wait':ph=='act';
 setInterval(()=>{if(P.length&&cardWait){const i=Q.findIndex(e=>e.s===P[cur].rid&&e.c=='k');if(i>=0){const e=Q.splice(i,1)[0],cw=cardWait;cardWait=null;cw.res(cw.four[e.v])}}
- if(busy||over||!P.length)return;const i=Q.findIndex(e=>e.s===P[cur].rid&&okp(e));if(i<0){while(Q.length>30)Q.shift();return}const e=Q.splice(i,1)[0];({r:doRoll,e:end,b:doBuy,c:doBuild,t:doTrade})[e.c](e.v)},150);
+ if(P.length&&debtWait){const i=Q.findIndex(e=>e.s===P[cur].rid&&e.c=='m');if(i>=0){const e=Q.splice(i,1)[0],dw=debtWait;debtWait=null;dw.res(e.v)}}
+ if(busy||over||!P.length)return;const i=Q.findIndex(e=>e.s===P[cur].rid&&okp(e));if(i<0){while(Q.length>30)Q.shift();return}const e=Q.splice(i,1)[0];({r:doRoll,e:end,b:doBuy,c:doBuild,t:doTrade,k:()=>{},m:()=>{}})[e.c](e.v)},150);
 function pub(x={}){const c=cards[0],[s,h,sh]=c.querySelectorAll('input[type=color]');let f=null;if(c.photo){const[k,y]=cv(48);y.drawImage(c.photo,0,0,48,48);f=k.toDataURL('image/jpeg',.5);if(f.length>2600)f=null}
  return room.presence({nm:c.querySelector('.nm').value.trim().slice(0,14)||'Jogador',sk:s.value,hr:h.value,sh:sh.value,gl:c.querySelector('.gl').checked?1:0,ph:f,...x})}
 async function joinRoom(code,host){if(!window.claude){alert('Modo online indisponível aqui.');return}
@@ -500,7 +562,7 @@ $('ocreate').onclick=()=>joinRoom(Math.random().toString(36).slice(2,7),true);
 $('ojoin').onclick=()=>{const c=$('ocode').value.toLowerCase().replace(/[^a-z0-9]/g,'');if(c.length<3)return alert('Digite o código da sala.');joinRoom(c,false)};
 $('oinv').onclick=async()=>{const t='Vem jogar Aracaju 3D comigo! Abra '+location.origin+location.pathname+'?sala='+$('code').textContent.toLowerCase()+' e entre na sala com o código '+$('code').textContent;try{await navigator.clipboard.writeText(t);$('vst').textContent='Convite copiado! Cole no WhatsApp.'}catch(e){prompt('Copie o convite:',t)}};
 $('ostart').onclick=()=>{const ord=room.peers().filter(p=>p.kind=='viewer').map(p=>p.peer);room.presence({st:{sd:1+Math.random()*1e9|0,ord,cpu:+$('ocpu').value,mn:startMoney}})};
-async function exitGame(){gen++;const rm=room;room=null;online=false;started=false;myAct=[];aseq=0;Object.keys(seen).forEach(k=>delete seen[k]);Object.keys(seenChat).forEach(k=>delete seenChat[k]);myChatLog=[];chatSeq=0;chatOpen=false;Q.length=0;
+async function exitGame(){gen++;$('deed').style.display='none';cardWait=null;debtWait=null;$('debtModal').style.display='none';$('cardm').style.display='none';const rm=room;room=null;online=false;started=false;myAct=[];aseq=0;Object.keys(seen).forEach(k=>delete seen[k]);Object.keys(seenChat).forEach(k=>delete seenChat[k]);myChatLog=[];chatSeq=0;chatOpen=false;Q.length=0;
  if(rm){try{await rm.leave()}catch(e){}}
  if(mic){mic.getTracks().forEach(t=>t.stop());mic=null}
  Object.keys(vc).forEach(k=>{try{vc[k].close()}catch(e){}delete vc[k]});document.querySelectorAll('audio[id^="au"]').forEach(a=>a.remove());
