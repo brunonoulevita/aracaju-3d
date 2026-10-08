@@ -83,6 +83,8 @@ h1{margin:4px 0;color:var(--a)}
 #cbadge{display:none;position:absolute;top:2px;right:4px;width:9px;height:9px;border-radius:50%;background:#e53935;box-shadow:0 0 0 2px #0d1b2e}
 #chat{position:fixed;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 150px);width:250px;max-width:66vw;height:0;overflow:hidden;background:rgba(13,23,38,.82);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid #ffffff22;border-radius:14px;box-shadow:0 10px 24px #0007;transition:height .22s ease;z-index:3;display:flex;flex-direction:column}
 #chat.open{height:290px}
+#chatHead{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 6px 12px;border-bottom:1px solid #ffffff22;font-size:12px;font-weight:700}
+#chatMin{width:28px;height:28px;border-radius:8px;padding:0;background:#ffffff22;color:#fff;font-size:16px;line-height:1}
 #chatMsgs{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px}
 .cmsg{max-width:88%;padding:6px 9px;border-radius:10px;background:#ffffff14;align-self:flex-start;font-size:12px;line-height:1.35;word-wrap:break-word}
 .cmsg.me{align-self:flex-end;background:var(--mc,#2447b5)}
@@ -187,7 +189,7 @@ h1{margin:4px 0;color:var(--a)}
 <div id="propm"><div class="box"><button id="prClose">✕</button><h3 id="prTitle"></h3><div id="prList"></div><div id="prGroups"></div></div></div>
 <div id="cardm"><div class="box"><h3 id="cmTitle"></h3><div id="cmCards"></div></div></div>
 <div id="cfm"><div class="box"><h3>🚪 Sair da partida?</h3><p id="cfmt"></p><div class="btns"><button id="cno">Continuar jogando</button><button id="cyes">Sim, sair</button></div></div></div>
-<div id="chat"><div id="chatMsgs"></div><div id="chatRow"><input id="chatIn" maxlength="140" placeholder="Mensagem para a sala…"><button id="chatSend">➤</button></div></div>
+<div id="chat"><div id="chatHead"><span>💬 Chat da sala</span><button id="chatMin" title="Minimizar o chat">—</button></div><div id="chatMsgs"></div><div id="chatRow"><input id="chatIn" maxlength="140" placeholder="Mensagem para a sala…"><button id="chatSend">➤</button></div></div>
 <div id="tradeSel"><div class="box"><button id="trClose">✕</button><h3>🤝 Negociar propriedade</h3>
 <p class="tr-lbl">Qual propriedade você quer vender?</p><div id="trProps" class="tr-wrap"></div>
 <p class="tr-lbl">Para qual jogador?</p><div id="trBuyers" class="tr-wrap"></div>
@@ -515,7 +517,7 @@ const ctl=p=>online?p.rid===me:!p.cpu;
 const Q=[],seen={},vc={},ICE={iceServers:[{urls:'stun:stun.l.google.com:19302'}]};
 async function doBuy(){const p=P[cur];if(!pend||p.money<pend.pr)return;busy=true;hud();if(!ctl(p))await showDeed(pend,4500);await buy(p);busy=false;hud()}
 async function doBuild(){busy=true;hud();await build(P[cur]);busy=false;hud()}
-function act(c,v){if(online){myAct=[...myAct,[++aseq,c,v]].slice(-10);room.presence({A:myAct})}Q.push({s:online?me:undefined,c,v})}
+function act(c,v){Q.push({s:online?me:undefined,c,v});if(online){myAct=[...myAct,[++aseq,c,v==null?0:v]].slice(-10);try{const q=room.presence({A:myAct});q&&q.catch&&q.catch(()=>{})}catch(e){console.error(e)}}}
 const okp=e=>e.c=='r'?ph=='roll':e.c=='c'?ph!='wait':ph=='act';
 setInterval(()=>{if(P.length&&cardWait){const i=Q.findIndex(e=>e.s===P[cur].rid&&e.c=='k');if(i>=0){const e=Q.splice(i,1)[0],cw=cardWait;cardWait=null;cw.res(cw.four[e.v])}}
  if(P.length&&debtWait){const i=Q.findIndex(e=>e.s===P[cur].rid&&e.c=='m');if(i>=0){const e=Q.splice(i,1)[0],dw=debtWait;debtWait=null;dw.res(e.v)}}
@@ -538,8 +540,11 @@ async function joinRoom(code,host){if(!window.claude){alert('Modo online indispo
  room.onPeers(onPeers);room.on('sig',onSig);cards[0].addEventListener('input',nameInput);
  try{pub(iamhost?{ho:1}:{}).catch(()=>{})}catch(e){}}
 function nameInput(){namedByUser=true;if(published&&room)pub()}
-async function startOnline(st,ps){started=true;seed=st.sd;startMoney=st.mn;
- const cfg=await Promise.all(st.ord.map(async l=>{const p=ps.find(x=>x.peer==l),d=p.presence;let ph2=null;if(d.ph)ph2=await new Promise(rs=>{const im=new Image();im.onload=()=>{const[k,x]=cv(128);x.drawImage(im,0,0,128,128);rs(k)};im.onerror=()=>rs(null);im.src=d.ph});return{rid:l,name:d.nm||'Jogador',skin:d.sk||'#f1c27d',hair:d.hr||'#222',shirt:d.sh||'#e53935',gl:!!d.gl,photo:ph2}}));
+const ordOf=st=>Array.isArray(st.ord)?st.ord:Object.values(st.ord||{});
+let lateWarned=false;
+async function startOnline(st,ps){started=true;try{await startOnline2(st,ps)}catch(e){console.error(e);toast('⚠️ Erro ao iniciar a partida: '+(e&&e.message||e))}}
+async function startOnline2(st,ps){seed=st.sd;startMoney=st.mn;
+ const cfg=await Promise.all(ordOf(st).map(async l=>{const p=ps.find(x=>x.peer==l),d=p.presence;let ph2=null;if(d.ph)ph2=await new Promise(rs=>{const im=new Image();im.onload=()=>{const[k,x]=cv(128);x.drawImage(im,0,0,128,128);rs(k)};im.onerror=()=>rs(null);im.src=d.ph});return{rid:l,name:d.nm||'Jogador',skin:d.sk||'#f1c27d',hair:d.hr||'#222',shirt:d.sh||'#e53935',gl:!!d.gl,photo:ph2}}));
  for(let i=0;i<st.cpu;i++)cfg.push({cpu:1,name:'CPU '+(i+1),skin:SK[i%6],hair:HR[i%6],shirt:freeShirt(cfg.map(c=>c.shirt)),gl:false});begin(cfg.slice(0,6))}
 function onPeers(ch){const ps=ch.peers.filter(p=>p.kind=='viewer'),mp=ps.find(p=>p.isMe&&p.sameTab);if(mp)me=mp.peer;
  if(!published){published=true;if(!iamhost&&!namedByUser){const nIn=cards[0].querySelector('.nm');if(/^(Jogador|CPU) \d+$/.test(nIn.value))nIn.value='Jogador '+Math.max(2,ps.length);av(cards[0])}pub(iamhost?{ho:1}:{})}
@@ -549,14 +554,14 @@ function onPeers(ch){const ps=ch.peers.filter(p=>p.kind=='viewer'),mp=ps.find(p=
  const iH=iamhost||(mp&&mp.presence.ho);$('ohost').style.display=iH?'flex':'none';$('owait').style.display=iH?'none':'block';
  ps.forEach(p=>{if(p.isMe)return;const A=p.presence.A;if(Array.isArray(A)){const l=seen[p.peer]||0;A.forEach(a=>{if(a[0]>l)Q.push({s:p.peer,c:a[1],v:a[2]})});seen[p.peer]=Math.max(l,...A.map(a=>a[0]))}
  const CH=p.presence.CH;if(Array.isArray(CH)&&CH.length){const l2=seenChat[p.peer]||0;CH.forEach(m=>{if(m[0]>l2)appendChatUI(p.presence.nm||'Jogador',p.presence.sh||'#888',m[1],false)});seenChat[p.peer]=Math.max(l2,...CH.map(m=>m[0]))}});
- const h=ps.find(p=>p.presence.st);if(h&&!started&&h.presence.st.ord.every(l=>ps.some(p=>p.peer==l)))startOnline(h.presence.st,ps);
+ const h=ps.find(p=>p.presence.st);if(h&&!started){const ord=ordOf(h.presence.st);if(ord.every(l=>ps.some(p=>p.peer==l))){if(me&&!ord.includes(me)){if(!lateWarned){lateWarned=true;toast('⚠️ A partida começou antes de você entrar. Peça ao anfitrião para criar uma nova sala.')}}else startOnline(h.presence.st,ps)}}
  ch.left.forEach(l=>{const p=P.find(x=>x.rid==l.peer);if(p&&!p.cpu){p.cpu=true;p.rid=undefined;const o=vc[l.peer];o&&o.close();delete vc[l.peer];if(P[cur]===p&&!busy&&!over){ph=='roll'?doRoll():cpuAct(p)}}});
  voice(ps)}
 /* voz (WebRTC, malha entre jogadores; sinalização pela sala) */
 function scrollChat(){const m=$('chatMsgs');m.scrollTop=m.scrollHeight}
 function appendChatUI(name,color,text,mine){const d=document.createElement('div');d.className='cmsg'+(mine?' me':'');if(mine)d.style.setProperty('--mc',color);d.innerHTML=`<b style="color:${mine?'#fff':color}">${esc(name)}</b>${esc(text)}`;$('chatMsgs').append(d);scrollChat();if(!chatOpen&&!mine)$('cbadge').style.display='block'}
 function toggleChat(){chatOpen=!chatOpen;$('chat').classList.toggle('open',chatOpen);if(chatOpen){$('cbadge').style.display='none';scrollChat();setTimeout(()=>$('chatIn').focus(),150)}}
-$('c8').onclick=toggleChat;
+$('c8').onclick=toggleChat;$('chatMin').onclick=()=>{if(chatOpen)toggleChat()};
 function sendChat(){const inp=$('chatIn'),text=inp.value.trim().slice(0,140);if(!text||!room)return;inp.value='';const c=cards[0],nm=c.querySelector('.nm').value.trim()||'Jogador',col=[...c.querySelectorAll('input[type=color]')][2].value;myChatLog=[...myChatLog,[++chatSeq,text]].slice(-12);room.presence({CH:myChatLog});appendChatUI(nm,col,text,true)}
 $('chatSend').onclick=sendChat;$('chatIn').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();sendChat()}};
 function sg(to,d){room.emit('sig',{to,from:me,...d}).catch(()=>{$('vst').textContent='Falha ao enviar o sinal de voz. Verifique as regras do Firebase.'})}
@@ -576,7 +581,7 @@ $('ocreate').onclick=()=>joinRoom(Math.random().toString(36).slice(2,7),true);
 $('ojoin').onclick=()=>{const c=$('ocode').value.toLowerCase().replace(/[^a-z0-9]/g,'');if(c.length<3)return alert('Digite o código da sala.');joinRoom(c,false)};
 $('oinv').onclick=async()=>{const t='Vem jogar Aracaju 3D comigo! Abra '+location.origin+location.pathname+'?sala='+$('code').textContent.toLowerCase()+' e entre na sala com o código '+$('code').textContent;try{await navigator.clipboard.writeText(t);$('vst').textContent='Convite copiado! Cole no WhatsApp.'}catch(e){prompt('Copie o convite:',t)}};
 $('ostart').onclick=()=>{const ord=room.peers().filter(p=>p.kind=='viewer').map(p=>p.peer);room.presence({st:{sd:1+Math.random()*1e9|0,ord,cpu:+$('ocpu').value,mn:startMoney}})};
-async function exitGame(){gen++;published=false;iamhost=false;namedByUser=false;cards[0].removeEventListener('input',nameInput);$('deed').style.display='none';cardWait=null;debtWait=null;$('debtModal').style.display='none';$('cardm').style.display='none';const rm=room;room=null;online=false;started=false;myAct=[];aseq=0;Object.keys(seen).forEach(k=>delete seen[k]);Object.keys(seenChat).forEach(k=>delete seenChat[k]);myChatLog=[];chatSeq=0;chatOpen=false;Q.length=0;
+async function exitGame(){gen++;lateWarned=false;published=false;iamhost=false;namedByUser=false;cards[0].removeEventListener('input',nameInput);$('deed').style.display='none';cardWait=null;debtWait=null;$('debtModal').style.display='none';$('cardm').style.display='none';const rm=room;room=null;online=false;started=false;myAct=[];aseq=0;Object.keys(seen).forEach(k=>delete seen[k]);Object.keys(seenChat).forEach(k=>delete seenChat[k]);myChatLog=[];chatSeq=0;chatOpen=false;Q.length=0;
  if(rm){try{await rm.leave()}catch(e){}}
  if(mic){mic.getTracks().forEach(t=>t.stop());mic=null}
  Object.keys(vc).forEach(k=>{try{vc[k].close()}catch(e){}delete vc[k]});document.querySelectorAll('audio[id^="au"]').forEach(a=>a.remove());
