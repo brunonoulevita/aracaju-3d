@@ -504,10 +504,10 @@ refresh();
 function fromPhoto(f,c){const fr=new FileReader();fr.onerror=()=>alert('Não consegui ler a foto.');fr.onload=()=>{const im=new Image();im.onerror=()=>alert('Formato de foto não suportado. Tente JPG ou PNG.');im.onload=()=>{
  const[k1,y]=cv(128),q=Math.min(im.width,im.height);y.drawImage(im,(im.width-q)/2,(im.height-q)/2,q,q,0,0,128,128);c.photo=k1;c.pu=k1.toDataURL('image/jpeg',.85);
  const avg=(a,b,w,h)=>{const d=y.getImageData(a,b,w,h).data,n=d.length/4;let z=[0,0,0];for(let i=0;i<d.length;i+=4)for(let j=0;j<3;j++)z[j]+=d[i+j];return'#'+z.map(v=>Math.round(v/n).toString(16).padStart(2,'0')).join('')};
- const[s1,h1,sh]=c.querySelectorAll('input[type=color]');s1.value=avg(48,54,32,22);h1.value=avg(38,4,52,14);sh.value=avg(38,108,52,16);c.querySelector('.pb').textContent='✔ Foto';av(c);room&&pub()};im.src=fr.result};fr.readAsDataURL(f)}
+ const[s1,h1,sh]=c.querySelectorAll('input[type=color]');s1.value=avg(48,54,32,22);h1.value=avg(38,4,52,14);sh.value=avg(38,108,52,16);c.querySelector('.pb').textContent='✔ Foto';fixShirt(c);av(c);room&&pub()};im.src=fr.result};fr.readAsDataURL(f)}
 function begin(cfg){P=cfg.map((c,i)=>{const p={id:i,cpu:!!c.cpu,rid:c.rid,name:c.name,money:startMoney,pos:0,jail:0,out:false};p.m=pawn({skin:c.skin,hair:c.hair,shirt:c.shirt,gl:c.gl,name:p.name,photo:c.photo},i);const L=lane(0,i);p.m.position.set(L[0],.26,L[1]);S.add(p.m);return p});
  $('menu').style.display='none';$('pip').style.display='block';busy=false;over=false;pend=null;Q.length=0;cur=0;ph='roll';hud();tinfo(0);log('Vez de '+P[0].name+' — jogue os dados!');setTimeout(fireworks,700);if(P[0].cpu)setTimeout(doRoll,800)}
-$('go').onclick=()=>{const cs=cards.filter(c=>c.dataset.t!='0');if(cs.length<2)return;seed=Math.random()*1e9|0;begin(cs.map((c,i)=>{const[s,h,sh]=c.querySelectorAll('input[type=color]'),cpu=c.dataset.t=='2';return{cpu,name:c.querySelector('.nm').value.trim()||(cpu?'CPU ':'Jogador ')+(i+1),skin:s.value,hair:h.value,shirt:sh.value,gl:c.querySelector('.gl').checked,photo:c.photo}}))};
+$('go').onclick=()=>{const cs=cards.filter(c=>c.dataset.t!='0');if(cs.length<2)return;cs.forEach(c=>fixShirt(c));seed=Math.random()*1e9|0;begin(cs.map((c,i)=>{const[s,h,sh]=c.querySelectorAll('input[type=color]'),cpu=c.dataset.t=='2';return{cpu,name:c.querySelector('.nm').value.trim()||(cpu?'CPU ':'Jogador ')+(i+1),skin:s.value,hair:h.value,shirt:sh.value,gl:c.querySelector('.gl').checked,photo:c.photo}}))};
 /* ===== online: salas, ações sincronizadas e voz ===== */
 let seed=1,room=null,online=false,me,started=false,myAct=[],aseq=0,mic=null,iamhost=false,namedByUser=false,published=false,chatSeq=0,myChatLog=[],seenChat={},chatOpen=false;
 const rnd=()=>{seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
@@ -520,20 +520,33 @@ const okp=e=>e.c=='r'?ph=='roll':e.c=='c'?ph!='wait':ph=='act';
 setInterval(()=>{if(P.length&&cardWait){const i=Q.findIndex(e=>e.s===P[cur].rid&&e.c=='k');if(i>=0){const e=Q.splice(i,1)[0],cw=cardWait;cardWait=null;cw.res(cw.four[e.v])}}
  if(P.length&&debtWait){const i=Q.findIndex(e=>e.s===P[cur].rid&&e.c=='m');if(i>=0){const e=Q.splice(i,1)[0],dw=debtWait;debtWait=null;dw.res(e.v)}}
  if(busy||over||!P.length)return;const i=Q.findIndex(e=>e.s===P[cur].rid&&okp(e));if(i<0){while(Q.length>30)Q.shift();return}const e=Q.splice(i,1)[0];({r:doRoll,e:end,b:doBuy,c:doBuild,t:doTrade,k:()=>{},m:()=>{}})[e.c](e.v)},150);
+const SHP=['#e53935','#1e88e5','#43a047','#fb8c00','#8e24aa','#00acc1','#fdd835','#6d4c41','#ec407a','#546e7a','#7cb342','#ff7043','#3949ab','#00897b'];
+const cdist=(a,b)=>{const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),x=p(a),y=p(b);return Math.hypot(x[0]-y[0],x[1]-y[1],x[2]-y[2])};
+const sameCol=(a,b)=>cdist(a,b)<70;
+function freeShirt(used){return SHP.find(c=>used.every(u=>!sameCol(c,u)))||'#'+(((used.length+7)*2654435)%0xffffff).toString(16).padStart(6,'0')}
+const shirtInp=c=>[...c.querySelectorAll('input[type=color]')][2];
+function otherShirts(c){if(online&&room)return room.peers().filter(p=>p.kind=='viewer'&&!p.isMe&&p.presence&&p.presence.sh).map(p=>p.presence.sh);return cards.filter(x=>x!==c&&x.dataset.t!='0').map(x=>shirtInp(x).value)}
+function fixShirt(c){const sh=shirtInp(c),used=otherShirts(c);if(used.some(u=>sameCol(u,sh.value))){sh.value=freeShirt(used);sh.dataset.prev=sh.value;av(c);toast('🎨 Cor de roupa já em uso — trocamos a sua.')}}
+cards.forEach(c=>{const sh=shirtInp(c);sh.dataset.prev=sh.value;sh.addEventListener('change',()=>{if(otherShirts(c).some(u=>sameCol(u,sh.value))){toast('⚠️ Essa cor de roupa já está em uso. Escolha outra.');sh.value=sh.dataset.prev}else sh.dataset.prev=sh.value;av(c);if(room&&c===cards[0])pub()})});
 function pub(x={}){const c=cards[0],[s,h,sh]=c.querySelectorAll('input[type=color]');let f=null;if(c.photo){const[k,y]=cv(48);y.drawImage(c.photo,0,0,48,48);f=k.toDataURL('image/jpeg',.5);if(f.length>2600)f=null}
  return room.presence({nm:c.querySelector('.nm').value.trim().slice(0,14)||'Jogador',sk:s.value,hr:h.value,sh:sh.value,gl:c.querySelector('.gl').checked?1:0,ph:f,...x})}
 async function joinRoom(code,host){if(!window.claude){alert('Modo online indisponível aqui.');return}
  try{const R0=await claude.use('room');if(!R0)throw 0;room=await R0.join('cv-'+code)}catch(e){alert('Não consegui conectar à sala online. Verifique a internet e a configuração do Firebase (veja o console do navegador).');room=null;return}
- online=true;iamhost=!!host;$('code').textContent=code.toUpperCase();$('onl0').style.display='none';$('onl1').style.display='block';$('c6').style.display='';$('c8').style.display='';
- if(iamhost){const nIn=cards[0].querySelector('.nm');if(/^(Jogador|CPU) \d+$/.test(nIn.value))nIn.value='Jogador 1'}
- room.onPeers(onPeers);room.on('sig',onSig);cards[0].addEventListener('input',()=>{namedByUser=true;if(published)pub()})}
+ published=false;namedByUser=false;started=false;online=true;iamhost=!!host;$('code').textContent=code.toUpperCase();$('onl0').style.display='none';$('onl1').style.display='block';$('c6').style.display='';$('c8').style.display='';
+ $('ohost').style.display=iamhost?'flex':'none';$('owait').style.display=iamhost?'none':'block';
+ const nIn=cards[0].querySelector('.nm');if(iamhost&&/^(Jogador|CPU) \d+$/.test(nIn.value))nIn.value='Jogador 1';
+ room.onPeers(onPeers);room.on('sig',onSig);cards[0].addEventListener('input',nameInput);
+ try{pub(iamhost?{ho:1}:{}).catch(()=>{})}catch(e){}}
+function nameInput(){namedByUser=true;if(published&&room)pub()}
 async function startOnline(st,ps){started=true;seed=st.sd;startMoney=st.mn;
  const cfg=await Promise.all(st.ord.map(async l=>{const p=ps.find(x=>x.peer==l),d=p.presence;let ph2=null;if(d.ph)ph2=await new Promise(rs=>{const im=new Image();im.onload=()=>{const[k,x]=cv(128);x.drawImage(im,0,0,128,128);rs(k)};im.onerror=()=>rs(null);im.src=d.ph});return{rid:l,name:d.nm||'Jogador',skin:d.sk||'#f1c27d',hair:d.hr||'#222',shirt:d.sh||'#e53935',gl:!!d.gl,photo:ph2}}));
- for(let i=0;i<st.cpu;i++)cfg.push({cpu:1,name:'CPU '+(i+1),skin:SK[i%6],hair:HR[i%6],shirt:PC[cfg.length%6],gl:false});begin(cfg.slice(0,6))}
+ for(let i=0;i<st.cpu;i++)cfg.push({cpu:1,name:'CPU '+(i+1),skin:SK[i%6],hair:HR[i%6],shirt:freeShirt(cfg.map(c=>c.shirt)),gl:false});begin(cfg.slice(0,6))}
 function onPeers(ch){const ps=ch.peers.filter(p=>p.kind=='viewer'),mp=ps.find(p=>p.isMe&&p.sameTab);if(mp)me=mp.peer;
  if(!published){published=true;if(!iamhost&&!namedByUser){const nIn=cards[0].querySelector('.nm');if(/^(Jogador|CPU) \d+$/.test(nIn.value))nIn.value='Jogador '+Math.max(2,ps.length);av(cards[0])}pub(iamhost?{ho:1}:{})}
+ if(published&&!started&&mp){const mine=shirtInp(cards[0]),rival=ps.find(p=>!p.isMe&&p.presence.sh&&sameCol(p.presence.sh,mine.value)&&((p.presence.ho&&!iamhost)||(!!p.presence.ho==iamhost&&p.peer<me)));
+  if(rival){mine.value=freeShirt(ps.filter(p=>!p.isMe&&p.presence.sh).map(p=>p.presence.sh));mine.dataset.prev=mine.value;av(cards[0]);toast('🎨 Sua cor de roupa já estava em uso — trocamos a sua.');pub()}}
  const L=$('plist');L.textContent='';ps.forEach(p=>{const d=document.createElement('div');d.textContent=(p.isMe&&p.sameTab?'⭐ ':'👤 ')+(p.presence.nm||'…')+(p.presence.ho?' · anfitrião':'')+(p.presence.vo?' · 🎙️':'');L.append(d)});
- const iH=mp&&mp.presence.ho;$('ohost').style.display=iH?'flex':'none';$('owait').style.display=iH?'none':'block';
+ const iH=iamhost||(mp&&mp.presence.ho);$('ohost').style.display=iH?'flex':'none';$('owait').style.display=iH?'none':'block';
  ps.forEach(p=>{if(p.isMe)return;const A=p.presence.A;if(Array.isArray(A)){const l=seen[p.peer]||0;A.forEach(a=>{if(a[0]>l)Q.push({s:p.peer,c:a[1],v:a[2]})});seen[p.peer]=Math.max(l,...A.map(a=>a[0]))}
  const CH=p.presence.CH;if(Array.isArray(CH)&&CH.length){const l2=seenChat[p.peer]||0;CH.forEach(m=>{if(m[0]>l2)appendChatUI(p.presence.nm||'Jogador',p.presence.sh||'#888',m[1],false)});seenChat[p.peer]=Math.max(l2,...CH.map(m=>m[0]))}});
  const h=ps.find(p=>p.presence.st);if(h&&!started&&h.presence.st.ord.every(l=>ps.some(p=>p.peer==l)))startOnline(h.presence.st,ps);
@@ -563,7 +576,7 @@ $('ocreate').onclick=()=>joinRoom(Math.random().toString(36).slice(2,7),true);
 $('ojoin').onclick=()=>{const c=$('ocode').value.toLowerCase().replace(/[^a-z0-9]/g,'');if(c.length<3)return alert('Digite o código da sala.');joinRoom(c,false)};
 $('oinv').onclick=async()=>{const t='Vem jogar Aracaju 3D comigo! Abra '+location.origin+location.pathname+'?sala='+$('code').textContent.toLowerCase()+' e entre na sala com o código '+$('code').textContent;try{await navigator.clipboard.writeText(t);$('vst').textContent='Convite copiado! Cole no WhatsApp.'}catch(e){prompt('Copie o convite:',t)}};
 $('ostart').onclick=()=>{const ord=room.peers().filter(p=>p.kind=='viewer').map(p=>p.peer);room.presence({st:{sd:1+Math.random()*1e9|0,ord,cpu:+$('ocpu').value,mn:startMoney}})};
-async function exitGame(){gen++;$('deed').style.display='none';cardWait=null;debtWait=null;$('debtModal').style.display='none';$('cardm').style.display='none';const rm=room;room=null;online=false;started=false;myAct=[];aseq=0;Object.keys(seen).forEach(k=>delete seen[k]);Object.keys(seenChat).forEach(k=>delete seenChat[k]);myChatLog=[];chatSeq=0;chatOpen=false;Q.length=0;
+async function exitGame(){gen++;published=false;iamhost=false;namedByUser=false;cards[0].removeEventListener('input',nameInput);$('deed').style.display='none';cardWait=null;debtWait=null;$('debtModal').style.display='none';$('cardm').style.display='none';const rm=room;room=null;online=false;started=false;myAct=[];aseq=0;Object.keys(seen).forEach(k=>delete seen[k]);Object.keys(seenChat).forEach(k=>delete seenChat[k]);myChatLog=[];chatSeq=0;chatOpen=false;Q.length=0;
  if(rm){try{await rm.leave()}catch(e){}}
  if(mic){mic.getTracks().forEach(t=>t.stop());mic=null}
  Object.keys(vc).forEach(k=>{try{vc[k].close()}catch(e){}delete vc[k]});document.querySelectorAll('audio[id^="au"]').forEach(a=>a.remove());
