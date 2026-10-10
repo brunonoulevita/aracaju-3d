@@ -123,6 +123,7 @@ h1{margin:4px 0;color:var(--a)}
 #debtModal .db-prop b{display:flex;align-items:center;gap:8px;font-size:14px;margin-bottom:8px}
 #debtModal .db-prop i{width:14px;height:14px;border-radius:4px;flex:none}
 #toast{position:fixed;left:50%;top:22%;transform:translate(-50%,-20px);background:linear-gradient(#c62828,#7a1515);color:#fff;font-weight:800;font-size:16px;padding:14px 22px;border-radius:14px;box-shadow:0 10px 30px #000a;opacity:0;pointer-events:none;transition:.35s;z-index:11;text-align:center;max-width:86vw}
+#toast.cpu{background:linear-gradient(#3949ab,#1a237e)}
 #toast.good{background:linear-gradient(#2e9e4f,#1b5e2e)}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 #saveM{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:11;padding:16px}
@@ -437,7 +438,7 @@ async function build(p){const t=elig(p)[0];if(!t)return;await pay(p,hc(t),null,'
 const rent=(t,d)=>t.ty=='R'?25*2**(T.filter(u=>u.ty=='R'&&u.own==t.own).length-1):t.ty=='U'?d*(T.filter(u=>u.ty=='U'&&u.own==t.own).length>1?10:4):Math.round(t.pr/10)*[1,3,6,10,14,22][t.h];
 $('pkeys').innerHTML=[1,2,3,4,5,6,7,8,9,'✕',0,'✓'].map(k=>`<span class="${k=='✕'?'r':k=='✓'?'g':''}" data-k="${k}">${k}</span>`).join('');
 $('pkeys').onclick=e=>{const el=e.target.closest('span[data-k]');if(!el||!tradeCtx)return;const k=el.dataset.k;
- if(k=='✕'){cancelTrade();return}
+ if(k=='✕'){if(tradeAmt.length){tradeAmt=tradeAmt.slice(0,-1);$('pamt').textContent=tradeAmt?fm(+tradeAmt):'R$ 0';$('pok').textContent=tradeAmt?'✕ apaga o último dígito':'✕ de novo para desistir da venda'}else cancelTrade();return}
  if(k=='✓'){confirmTrade();return}
  if(tradeAmt.length<7)tradeAmt+=k;$('pamt').textContent=tradeAmt?fm(+tradeAmt):'R$ 0'};
 let tradeCtx=null,tradeAmt='';
@@ -458,14 +459,16 @@ function startTrade(buyer,tile,cb){tradeCtx={buyer,tile,cb};tradeAmt='';
  $('pcard').className='';$('pcard').style.background=`linear-gradient(135deg,${PC[buyer.id]},#222)`;
  $('pcard').innerHTML=`<s></s>${esc(buyer.name.toUpperCase())}<br><small>•••• •••• •••• ${1000+buyer.id*1111}</small><br><small>VÁLIDO 12/30</small>`;
  $('prc').innerHTML='';$('prc').className='';
- $('pdesc').textContent='Negociação: '+tile.n;$('pamt').textContent='R$ 0';$('pok').textContent='Digite o valor e confirme';
+ $('pdesc').textContent='Negociação: '+tile.n;$('pamt').textContent='R$ 0';$('pok').textContent='Digite o valor · ✕ apaga um dígito';
  $('pos').className='show trade'}
 function cancelTrade(){const cb=tradeCtx&&tradeCtx.cb;tradeCtx=null;tradeAmt='';$('pos').className='';if(cb)cb(null);else log('Negociação cancelada.')}
 async function confirmTrade(){if(!tradeCtx||!tradeAmt)return;const amt=+tradeAmt,{buyer,tile}=tradeCtx;
  if(amt<=0)return;if(buyer.money<amt){$('pok').textContent='Saldo insuficiente!';beep(160,.2);return}
+ if(buyer.cpu){const ev=cpuEval(buyer,tile,amt);if(!ev.ok){$('pok').textContent='🤖 '+buyer.name+' recusou: '+ev.why;beep(160,.2);return}}
  $('pos').className='';const cb=tradeCtx.cb;tradeCtx=null;tradeAmt='';if(cb)cb(amt);else act('t',{ti:tile.i,bi:buyer.id,amt})}
 async function doTrade(v){const tile=T[v.ti],buyer=P.find(x=>x.id==v.bi),seller=P[cur];
  if(!tile||!buyer||tile.own!=seller.id||tile.mort||buyer.money<v.amt||v.amt<=0)return;
+ if(buyer.cpu){const ev=cpuEval(buyer,tile,v.amt);if(!ev.ok){cpuNotice('🤖 '+buyer.name+' recusou a proposta de '+fm(v.amt)+' por '+tile.n+' ('+ev.why+')');return}}
  busy=true;hud();await pay(buyer,v.amt,seller,'Negociação: '+tile.n);setOwner(tile,buyer.id);
  log(`${seller.name} vendeu ${tile.n} para ${buyer.name} por ${fm(v.amt)}`);busy=false;hud()}
 async function pos(p,amt,desc,to){const e=$('pos'),c=$('pcard');c.style.background=`linear-gradient(135deg,${PC[p.id]},#222)`;c.innerHTML=`<s></s>${p.name.toUpperCase()}<br><small>•••• •••• •••• ${1000+p.id*1111}</small><br><small>VÁLIDO 12/30</small>`;$('pamt').textContent=fm(amt);$('pdesc').textContent=desc+(to?' → '+to.name:'');$('pok').textContent='Insira o cartão…';$('prt'||'prc');$('prc').innerHTML=`ARACAJU<br>${p.name}<br>${desc}<br><b>${fm(amt)}</b><br>APROVADO`;e.className='show';await sleep(500);c.className='swipe';await sleep(600);$('pok').textContent='Processando…';beep(500,.05);await sleep(600);e.className='show ok';$('pok').textContent='✔ APROVADO';beep(880,.15);$('prc').className='print';await sleep(1300);e.className='';c.className='';$('prc').className=''}
@@ -504,7 +507,7 @@ function applySnap(sn){P.forEach((p,i)=>{const d=sn.P[i];p.money=d.money;p.pos=d
 $('c9').onclick=()=>{if(online&&!iamhost){toast('Só o anfitrião pode salvar a partida online');return}if(busy||over||!(ph=='roll'||ph=='act')||tradeCtx){toast('Aguarde o fim da jogada para salvar');return}cloudSave(true)};
 $('ldBtn').onclick=()=>{if(online){toast('Carregar só funciona no modo "Neste aparelho"');return}openSlots('load')};
 $('svClose').onclick=()=>{$('saveM').style.display='none'};
-function toast(m,ok){const e=$('toast');e.textContent=m;e.classList.toggle('good',!!ok);e.classList.add('on');setTimeout(()=>e.classList.remove('on'),Math.max(3500,m.length*65))}
+function toast(m,ok){const e=$('toast');e.textContent=m;e.classList.toggle('good',ok===true);e.classList.toggle('cpu',ok==='cpu');e.classList.add('on');setTimeout(()=>e.classList.remove('on'),Math.max(3500,m.length*65))}
 function mortgage(p,t){const val=Math.round((t.pr||0)/2);p.money+=val;if(t.h){t.h=0;show(t)}setOwner(t,-1);log(`${p.name} hipotecou ${t.n} ao banco por ${fm(val)}`);beep(520,.15);hud()}
 /*FIN-START*/
 const CFG=Object.freeze({juros:10,jurosBanco:5,parcelas:3,maxLoans:2,creditLimit:2000,minLoan:100,redeemFee:10,turnsPerParcel:3});
@@ -529,31 +532,42 @@ function finLoan(p,amt,kind){amt=Math.floor(+amt);const rate=kind=='banco'?CFG.j
  loansOf(p).push(l);p.money=r2(p.money+amt);
  ll(l,'Empréstimo liberado: '+fm(amt)+' + juros '+rate+'% = '+fm(c.total/100)+' em '+c.parc.length+' parcelas',amt);
  fh(p,'Empréstimo '+l.id+' ('+(kind=='banco'?'especial '+rate+'%':'padrão '+rate+'%')+') — total a pagar '+fm(c.total/100),amt);
- log(p.name+' contratou o empréstimo '+l.id+': '+fm(amt)+' (total '+fm(c.total/100)+')');beep(660,.15);return l}
+ log(p.name+' contratou o empréstimo '+l.id+': '+fm(amt)+' (total '+fm(c.total/100)+')');if(p.cpu)cpuNotice('🤖 '+p.name+(kind=='banco'?' aceitou o empréstimo especial do Banco: ':' pegou um empréstimo: ')+fm(amt)+' — total '+fm(c.total/100)+' em '+c.parc.length+' parcelas');beep(660,.15);return l}
 function finMortgage(p,t){const why=mortReason(p,t);if(why){toast('⚠️ '+why);return false}
  const v=mortVal(t);t.mort=v;p.money=r2(p.money+v);setOwner(t,t.own);
- fh(p,'Hipoteca de '+t.n+' (preço original '+fm(t.pr)+' → recebido '+fm(v)+')',v);log(p.name+' hipotecou '+t.n+' e recebeu '+fm(v));beep(520,.15);return true}
+ fh(p,'Hipoteca de '+t.n+' (preço original '+fm(t.pr)+' → recebido '+fm(v)+')',v);log(p.name+' hipotecou '+t.n+' e recebeu '+fm(v));if(p.cpu)cpuNotice('🤖 '+p.name+' hipotecou '+t.n+' e recebeu '+fm(v));beep(520,.15);return true}
 async function finRedeem(p,t){if(!t||t.own!==p.id||!t.mort){toast('⚠️ Esta propriedade não está hipotecada.');return false}
  const v=redeemVal(t);if(p.money<v){toast('⚠️ Saldo insuficiente para resgatar ('+fm(v)+')');return false}
  const rec=t.mort;await pay(p,v,null,'Resgate de hipoteca: '+t.n);if(p.out)return false;
- t.mort=0;setOwner(t,t.own);fh(p,'Resgate da hipoteca de '+t.n+' (recebido '+fm(rec)+' + taxa '+CFG.redeemFee+'%)',-v);log(p.name+' resgatou '+t.n+' por '+fm(v));return true}
+ t.mort=0;setOwner(t,t.own);fh(p,'Resgate da hipoteca de '+t.n+' (recebido '+fm(rec)+' + taxa '+CFG.redeemFee+'%)',-v);log(p.name+' resgatou '+t.n+' por '+fm(v));if(p.cpu)cpuNotice('🤖 '+p.name+' resgatou a hipoteca de '+t.n+' e recuperou a propriedade (pagou '+fm(v)+')');return true}
 async function finPay(p,lid,quit){const l=loansOf(p).find(x=>x.id==lid);if(!l||l.st!='ativo'){toast('⚠️ Empréstimo não encontrado ou já quitado.');return false}
  const pend=l.parc.filter(x=>!x.paid);if(!pend.length)return false;const cents=quit?l.bal:pend[0].amt,v=r2(cents/100);
  if(p.money<v){toast('⚠️ Saldo insuficiente ('+fm(v)+')');return false}
  await pay(p,v,null,(quit?'Quitação':'Parcela '+pend[0].n+'/'+l.n)+' do empréstimo '+l.id);if(p.out)return false;
  if(quit)pend.forEach(x=>x.paid=true);else pend[0].paid=true;
  l.paid=l.parc.filter(x=>x.paid).length;l.bal-=cents;
- ll(l,quit?'Saldo quitado antecipadamente':'Parcela '+(l.paid)+'/'+l.n+' paga',-v);fh(p,(quit?'Quitação do empréstimo ':'Parcela do empréstimo ')+l.id,-v);
+ ll(l,quit?'Saldo quitado antecipadamente':'Parcela '+(l.paid)+'/'+l.n+' paga',-v);fh(p,(quit?'Quitação do empréstimo ':'Parcela do empréstimo ')+l.id,-v);if(p.cpu)cpuNotice('🤖 '+p.name+(quit?' quitou o empréstimo '+l.id+' (pagou '+fm(v)+')':' pagou a parcela '+l.paid+'/'+l.n+' do empréstimo '+l.id+' ('+fm(v)+')'));
  if(l.parc.every(x=>x.paid)){l.st='quitado';l.bal=0;ll(l,'Empréstimo quitado',0);fh(p,'Empréstimo '+l.id+' totalmente quitado',0)}return true}
 function dueNow(p){return activeLoans(p).some(l=>l.parc.some(x=>!x.paid&&x.due<=(p.turns||0)))}
 async function collectDues(p){for(const l of activeLoans(p)){for(const x of l.parc){if(x.paid||x.due>(p.turns||0))continue;if(p.out)return;
   await pay(p,r2(x.amt/100),null,'Parcela '+x.n+'/'+l.n+' — empréstimo '+l.id);if(p.out)return;
-  x.paid=true;l.paid=l.parc.filter(y=>y.paid).length;l.bal-=x.amt;ll(l,'Parcela '+x.n+'/'+l.n+' cobrada automaticamente',-x.amt/100);fh(p,'Parcela '+x.n+'/'+l.n+' do empréstimo '+l.id+' (cobrança automática)',-x.amt/100);
+  x.paid=true;l.paid=l.parc.filter(y=>y.paid).length;l.bal-=x.amt;ll(l,'Parcela '+x.n+'/'+l.n+' cobrada automaticamente',-x.amt/100);fh(p,'Parcela '+x.n+'/'+l.n+' do empréstimo '+l.id+' (cobrança automática)',-x.amt/100);if(p.cpu)cpuNotice('🤖 '+p.name+' pagou a parcela '+x.n+'/'+l.n+' do empréstimo '+l.id+' ('+fm(x.amt/100)+')');
   if(l.parc.every(y=>y.paid)){l.st='quitado';l.bal=0;ll(l,'Empréstimo quitado',0);fh(p,'Empréstimo '+l.id+' totalmente quitado',0)}}}}
 function cpuDebtChoice(p,need,canLoan,props){const lack=r2(need-p.money);
  if(canLoan){return{k:'loan',amt:Math.min(creditAvail(p),Math.max(CFG.minLoan,Math.ceil(lack/10)*10))}}
  const el=props.filter(t=>!mortReason(p,t)).sort((a,b)=>b.pr-a.pr||a.i-b.i);if(el.length)return{k:'mort',ti:el[0].i};
  const sl=props.filter(t=>!t.mort).sort((a,b)=>b.pr-a.pr||a.i-b.i);return{ti:sl[0].i,bi:-1,amt:0}}
+const nq=[];let nbusy=false;
+function cpuNotice(m){log(m);nq.push(m);if(nbusy)return;nbusy=true;(async()=>{while(nq.length){const t=nq.shift();toast(t,'cpu');await new Promise(r=>setTimeout(r,Math.max(3600,t.length*60)))}nbusy=false})()}
+function cpuEval(b,t,amt){const val=(t.pr||0)+(t.h?Math.round(t.h*hc(t)*0.5):0);let max=val*1.15;
+ if(t.ty=='p'){const g=T.filter(u=>u.g===t.g);if(g.every(u=>u.own==b.id||u===t))max=val*1.7;else if(g.some(u=>u.own==b.id))max=val*1.3}
+ max=Math.round(max);if(b.money-amt<150)return{ok:false,why:'não quer ficar sem reserva de dinheiro'};
+ if(amt>max)return{ok:false,why:'achou o preço alto demais; pagaria até cerca de '+fm(max)};return{ok:true}}
+function cpuFinNeeded(p){return activeLoans(p).length>0||T.some(t=>t.own==p.id&&t.mort)||p.money<200}
+async function cpuFinance(p){
+ for(const t of T.filter(t=>t.own==p.id&&t.mort).sort((a,b)=>b.pr-a.pr||a.i-b.i)){if(p.out)return;if(p.money-redeemVal(t)>=300){await finRedeem(p,t);await sleep(1800)}}
+ for(const l of activeLoans(p).slice().sort((a,b)=>b.rate-a.rate)){if(p.out)return;if(p.money-l.bal/100>=1500){await finPay(p,l.id,true);await sleep(1800)}}
+ if(!p.out&&p.money<200&&activeLoans(p).length<CFG.maxLoans&&creditAvail(p)>=CFG.minLoan){finLoan(p,Math.min(creditAvail(p),400),'padrao');await sleep(1800)}}
 /*FIN-END*/
 function mortHTML(t){const v=mortVal(t),rv=redeemVal({mort:v});return`<p><b>${esc(t.n)}</b></p><p>Preço original de compra: <b>${fm(t.pr)}</b></p><p>Valor que você receberá (50%): <b>${fm(v)}</b></p><p>A propriedade continua sua, mas ficará <b>HIPOTECADA</b>: sem cobrança de aluguel até o resgate (${fm(rv)}).</p>`}
 function confirmBox(title,html,okText){return new Promise(res=>{$('qTitle').textContent=title;$('qBody').innerHTML=html;$('qOk').textContent=okText||'Confirmar';$('qM').style.display='flex';const done=v=>{$('qM').style.display='none';$('qOk').onclick=$('qNo').onclick=null;res(v)};$('qOk').onclick=()=>done(true);$('qNo').onclick=()=>done(false)})}
@@ -588,6 +602,7 @@ async function debtShow(p,need){while(true){const sel=await debtPick(p,need);
 async function applyDebtChoice(p,ch){if(ch.k=='loan'){finLoan(p,ch.amt,'padrao');return}if(ch.k=='mort'){finMortgage(p,T[ch.ti]);return}
  const t=T[ch.ti];if(ch.bi<0){mortgage(p,t);return}
  const b=P.find(x=>x.id==ch.bi);if(!b||t.own!=p.id||t.mort||b.money<ch.amt||ch.amt<=0)return;
+ if(b.cpu){const ev=cpuEval(b,t,ch.amt);if(!ev.ok){cpuNotice('🤖 '+b.name+' recusou a proposta de '+fm(ch.amt)+' por '+t.n+' ('+ev.why+')');return}}
  await pay(b,ch.amt,p,'Negociação: '+t.n);setOwner(t,b.id);log(`${p.name} vendeu ${t.n} para ${b.name} por ${fm(ch.amt)}`);hud()}
 async function resolveDebt(p,need){
  while(p.money<need){const props=T.filter(t=>t.own==p.id&&t.pr),canLoan=activeLoans(p).length<CFG.maxLoans&&creditAvail(p)>=CFG.minLoan;
@@ -597,7 +612,7 @@ async function resolveDebt(p,need){
   else if(ctl(p)){ch=await debtShow(p,need);if(online)act('m',ch)}
   else{ch=await new Promise(res=>{debtWait={res}})}
   if(ch.k=='bust'){$('debtModal').style.display='none';return false}
-  await applyDebtChoice(p,ch)}
+  await applyDebtChoice(p,ch);if(p.cpu)await sleep(1800)}
  $('debtModal').style.display='none';return true}
 /* ===== casa BANCO ===== */
 function waitAct(code){return new Promise(res=>waits.push({code,res}))}
@@ -605,11 +620,11 @@ async function bankOffer(p){if(p.out)return;let amt=0;
  if(p.cpu){const av=creditAvail(p);if(activeLoans(p).length<CFG.maxLoans&&av>=CFG.minLoan&&p.money<400)amt=Math.min(av,500);await sleep(400)}
  else if(ctl(p)){log('🏦 '+p.name+' parou no Banco: oferta de empréstimo especial de '+CFG.jurosBanco+'%.');amt=(await askLoan(p,CFG.jurosBanco,500,'🏦 Banco — empréstimo especial ('+CFG.jurosBanco+'%)','✅ Aceitar oferta','✕ Recusar'))||0;if(online)act('lb',amt)}
  else{toast('🏦 '+p.name+' está avaliando a oferta do banco…');amt=(await waitAct('lb'))||0}
- if(amt>0){const l=finLoan(p,amt,'banco');if(l)toast('🏦 '+p.name+' contratou '+fm(amt)+' (juros '+CFG.jurosBanco+'%)',true)}else log(p.name+' recusou a oferta do banco.')}
+ if(amt>0){const l=finLoan(p,amt,'banco');if(l&&!p.cpu)toast('🏦 '+p.name+' contratou '+fm(amt)+' (juros '+CFG.jurosBanco+'%)',true)}else log(p.name+' recusou a oferta do banco.')}
 /* ===== turno: cobrança de parcelas, persistência ===== */
 async function turnStart(){const p=P[cur];if(!p||over)return;if(p.out){setTimeout(end,300);return}
  if(!p.again)p.turns=(p.turns||0)+1;
- if(dueNow(p)){busy=true;hud();await collectDues(p);busy=false;hud();if(p.out&&!over){end();return}}
+ if(dueNow(p)||(p.cpu&&cpuFinNeeded(p))){busy=true;hud();if(dueNow(p))await collectDues(p);if(p.cpu&&!p.out)await cpuFinance(p);busy=false;hud();if(p.out&&!over){end();return}}
  persistCurrent();if(p.cpu&&!p.out)setTimeout(doRoll,700)}
 function persistCurrent(){if(online||!P.length||over||busy||!(ph=='roll'||ph=='act'))return;try{localStorage.setItem('aracaju3d_current',JSON.stringify(snapshot()))}catch(e){}}
 function clearCurrent(){try{localStorage.removeItem('aracaju3d_current')}catch(e){}}
