@@ -17,7 +17,7 @@ button:disabled{opacity:.3}
 h1{margin:4px 0;color:var(--a)}
 #cam{position:fixed;right:6px;top:calc(env(safe-area-inset-top,0px) + 74px);display:flex;flex-direction:column;gap:6px}
 #cam button{padding:0;width:44px;height:44px;font-size:20px;border-radius:50%;background:#000a;color:#fff}
-#pos{position:fixed;left:50%;top:30%;width:230px;transform:translate(-50%,-20px) perspective(700px) rotateX(10deg);opacity:0;pointer-events:none;transition:.3s;z-index:4}
+#pos{position:fixed;left:50%;top:30%;width:230px;transform:translate(-50%,-20px) perspective(700px) rotateX(10deg);opacity:0;pointer-events:none;transition:.3s;z-index:15}
 #pos.show{opacity:1;pointer-events:auto;transform:translate(-50%,0) perspective(700px) rotateX(10deg)}
 #pcard{position:absolute;left:10px;top:-64px;width:150px;height:94px;border-radius:10px;padding:8px;box-sizing:border-box;font:700 10px system-ui;color:#fff;box-shadow:0 2px 8px #0008;line-height:1.3}
 #pcard s{display:block;width:24px;height:17px;border-radius:3px;background:linear-gradient(135deg,#f5d77a,#b8902a);margin:2px 0 4px}
@@ -72,16 +72,16 @@ h1{margin:4px 0;color:var(--a)}
 .chip em{font-style:normal;opacity:.8}
 .chip.on{border-color:var(--pc);box-shadow:0 0 0 2px var(--pc),0 6px 18px #0007;transform:translateY(2px) scale(1.03)}
 .chip.out{opacity:.35;filter:grayscale(1);text-decoration:line-through}
-#log{background:rgba(15,25,40,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid #ffffff22;border-radius:14px;padding:8px 16px;font-size:14px;box-shadow:0 6px 20px #0006}
+#log{background:rgba(15,25,40,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid #ffffff22;border-radius:14px;padding:8px 16px;font-size:14px;box-shadow:0 -2px 10px #0004}
 #btns{gap:8px}
-#btns button{padding:13px 18px;border-radius:16px;font-size:15px;color:#fff;box-shadow:0 6px 16px #0006,inset 0 1px 0 #fff4;transition:transform .15s}
+#btns button{padding:13px 18px;border-radius:16px;font-size:15px;color:#fff;box-shadow:0 2px 5px #0004,inset 0 1px 0 #fff4;transition:transform .15s}
 #btns button:active:not(:disabled){transform:scale(.95)}
 #btns button:disabled{opacity:.3;filter:grayscale(.8)}
 #roll{background:linear-gradient(#ffd54a,#f2a900);color:#3a2a00!important;font-size:17px!important;padding:14px 22px!important}
 #buy{background:linear-gradient(#4ec96a,#1f8a3b)}#build{background:linear-gradient(#4aa3ff,#1d5fd1)}#trade{background:linear-gradient(#ffb74d,#e67e22)}#end{background:linear-gradient(#7b8794,#4b5563)}
 #cam button{background:rgba(15,25,40,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid #ffffff22;box-shadow:0 4px 12px #0006}
 #cbadge{display:none;position:absolute;top:2px;right:4px;width:9px;height:9px;border-radius:50%;background:#e53935;box-shadow:0 0 0 2px #0d1b2e}
-#chat{position:fixed;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 150px);width:250px;max-width:66vw;height:0;overflow:hidden;background:rgba(13,23,38,.82);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid #ffffff22;border-radius:14px;box-shadow:0 10px 24px #0007;transition:height .22s ease;z-index:3;display:flex;flex-direction:column}
+#chat{position:fixed;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + var(--botH,150px) + 10px);width:250px;max-width:66vw;height:0;overflow:hidden;background:rgba(13,23,38,.82);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid #ffffff22;border-radius:14px;box-shadow:0 10px 24px #0007;transition:height .22s ease;z-index:3;display:flex;flex-direction:column}
 #chat.open{height:290px}
 #chatHead{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 6px 12px;border-bottom:1px solid #ffffff22;font-size:12px;font-weight:700}
 #chatMin{width:28px;height:28px;border-radius:8px;padding:0;background:#ffffff22;color:#fff;font-size:16px;line-height:1}
@@ -95,7 +95,7 @@ h1{margin:4px 0;color:var(--a)}
 @media(min-width:700px){#chat{bottom:calc(env(safe-area-inset-bottom,0px) + 16px);width:300px}#chat.open{height:340px}}
 #tile{display:flex;flex-direction:column;gap:2px;background:rgba(15,25,40,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid #ffffff22;border-left:6px solid var(--tc,#888);border-radius:12px;padding:8px 12px;font-size:12px}
 #tile b{font-size:14px}#tile span{color:#ffd54a;font-weight:700}#tile em{font-style:normal;opacity:.8}
-#pip{position:fixed;left:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 150px);width:104px;height:104px;border-radius:50%;overflow:hidden;border:3px solid var(--a);box-shadow:0 6px 18px #000a;z-index:2;display:none;background:#000;pointer-events:none}
+#pip{position:fixed;left:10px;bottom:calc(env(safe-area-inset-bottom,0px) + var(--botH,150px) + 10px);width:104px;height:104px;border-radius:50%;overflow:hidden;border:3px solid var(--a);box-shadow:0 6px 18px #000a;z-index:2;display:none;background:#000;pointer-events:none}
 #pip canvas{width:100%;height:100%;display:block}
 #pip small{position:absolute;bottom:6px;left:0;right:0;text-align:center;font:700 10px system-ui;text-shadow:0 1px 3px #000}
 @media(min-width:700px){#pip{width:170px;height:170px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px)}#pip small{font-size:13px;bottom:10px}}
@@ -252,18 +252,32 @@ h1{margin:4px 0;color:var(--a)}
 #lnPrev,#qBody{font-size:13px;line-height:1.6;margin:10px 0;background:#ffffff0d;border-radius:10px;padding:10px}#qBody{background:none;padding:0}
 .lm-btns{display:flex;gap:8px}.lm-btns button{flex:1;padding:12px 8px;border-radius:12px;font-weight:800;color:#fff;background:#ffffff22}
 #lnOk,#qOk{background:linear-gradient(#4ec96a,#1f8a3b)}#lnOk:disabled{opacity:.35}
+#btns{position:relative;z-index:1}
+.fn-grp{border-left:4px solid var(--gc);padding-left:8px;margin-bottom:12px}
+.fn-gh{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin:6px 0}.fn-gh span{opacity:.7;font-size:11px}
+.fn-b button[data-f="mort"]{background:linear-gradient(#ffb74d,#e65100);border-color:#ffb74d}
+.fn-b button[data-f="redeem"]{background:linear-gradient(#26c6da,#00838f);border-color:#26c6da}
+.fn-b button[data-f="pay"]{background:linear-gradient(#66bb6a,#2e7d32);border-color:#66bb6a}
+.fn-b button[data-f="quit"]{background:linear-gradient(#ab47bc,#6a1b9a);border-color:#ab47bc}
+.fn-b button:disabled{filter:grayscale(.7)}
+#cpuNM{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;z-index:14;padding:14px}
+#cpuNM .box{background:linear-gradient(#1c2a66,#10173d);border:1px solid #7986cb;border-radius:18px;padding:20px;max-width:380px;width:100%;box-shadow:0 20px 50px #000a;text-align:center}
+#cpuNM h3{margin:0 0 10px;font-size:18px;color:#c5cae9}#cnMsg{font-size:17px;line-height:1.45;margin:0 0 12px;font-weight:700}
+.cn-bar{height:4px;background:#ffffff22;border-radius:4px;overflow:hidden;margin-bottom:12px}.cn-bar i{display:block;height:100%;background:#8ff0a4;animation:cnb 7s linear forwards}@keyframes cnb{from{width:100%}to{width:0}}
+#cnOk{width:100%;padding:13px;border-radius:14px;font-weight:800;color:#fff;background:linear-gradient(#5c6bc0,#303f9f)}
 </style></head><body>
 <div id="hudtop"><div id="top"></div><div id="tile"></div></div>
 <div id="bot"><div id="log">Arraste para girar · pinça/scroll para zoom</div><div id="btns"><button id="roll">🎲 Jogar dados</button><button id="buy">🛒 Comprar</button><button id="build">🏗️ Construir</button><button id="trade">🤝 Negociar</button><button id="fin">EMPRÉSTIMOS &amp; HIPOTECAS</button><button id="end">⏭️ Encerrar</button></div></div>
-<div id="cam"><button id="c1" title="Visão geral">🗺️</button><button id="c2" title="Visão de cima">⬇️</button><button id="c3" title="Seguir jogador">🎯</button><button id="c4" title="Girar">↻</button><button id="c5" title="Modo drone">🚁</button><button id="c6" title="Entrar na voz (ligar o microfone)" style="display:none">🎙️</button><button id="c8" title="Chat" style="display:none;position:relative">💬<i id="cbadge"></i></button><button id="c9" title="Salvar partida">💾</button><button id="c7" title="Sair da partida">🚪</button></div>
+<div id="cam"><button id="c1" title="Visão geral">🗺️</button><button id="c2" title="Visão de cima">⬇️</button><button id="c3" title="Seguir jogador">🎯</button><button id="c4" title="Girar">↻</button><button id="c5" title="Modo drone">🚁</button><button id="c6" title="Entrar na voz (ligar o microfone)" style="display:none">🎙️</button><button id="c8" title="Chat" style="display:none;position:relative">💬<i id="cbadge"></i></button><button id="c9" title="Salvar partida">💾</button><button id="c10" title="Manual do jogo">📖</button><button id="c7" title="Sair da partida">🚪</button></div>
 <div id="pip"><canvas id="pipc"></canvas></div>
 <div id="propm"><div class="box"><button id="prClose">✕</button><h3 id="prTitle"></h3><div id="prList"></div><div id="prGroups"></div></div></div>
 <div id="cardm"><div class="box"><h3 id="cmTitle"></h3><p id="cmSub"></p><div id="cmCards"></div><button id="cmGo" style="display:none">Continuar ▶</button></div></div>
 <div id="cfm"><div class="box"><h3>🚪 Sair da partida?</h3><p id="cfmt"></p><div class="btns"><button id="cno">Continuar jogando</button><button id="cyes">Sim, sair</button></div></div></div>
 <div id="chat"><div id="chatHead"><span>💬 Chat da sala</span><button id="chatMin" title="Minimizar o chat">—</button></div><div id="chatMsgs"></div><div id="chatRow"><input id="chatIn" maxlength="140" placeholder="Mensagem para a sala…"><button id="chatSend">➤</button></div></div>
-<div id="tradeSel"><div class="box"><button id="trClose">✕</button><h3>🤝 Negociar propriedade</h3>
-<p class="tr-lbl">Qual propriedade você quer vender?</p><div id="trProps" class="tr-wrap"></div>
-<p class="tr-lbl">Para qual jogador?</p><div id="trBuyers" class="tr-wrap"></div>
+<div id="tradeSel"><div class="box"><button id="trClose">✕</button><h3>🤝 Negociar propriedades</h3>
+<div class="seg" id="trMode" style="--pc:#e67e22"><button data-m="sell" class="on">💰 Vender a um jogador</button><button data-m="buy">🛒 Fazer oferta de compra</button></div>
+<p class="tr-lbl" id="trL1">Qual propriedade você quer vender?</p><div id="trProps" class="tr-wrap"></div>
+<p class="tr-lbl" id="trL2">Para qual jogador?</p><div id="trBuyers" class="tr-wrap"></div>
 <button id="trNext" disabled>Avançar para o pagamento</button></div></div>
 <div id="debtModal"><div class="box"><h3 id="dbTitle"></h3><p id="dbMsg"></p><div id="dbProps" class="tr-wrap"></div></div></div>
 <div id="toast"></div>
@@ -272,13 +286,15 @@ h1{margin:4px 0;color:var(--a)}
 <div id="finM"><div class="box"><button id="finClose">✕</button><h3 id="finTitle"></h3><div id="finBody"></div></div></div>
 <div id="loanM"><div class="box"><h3 id="lnTitle"></h3><p id="lnInfo"></p><label class="ln-l">Valor do empréstimo (R$)<input id="lnAmt" type="number" inputmode="numeric" step="10"></label><div id="lnPrev"></div><div class="lm-btns"><button id="lnNo"></button><button id="lnOk"></button></div></div></div>
 <div id="qM"><div class="box"><h3 id="qTitle"></h3><div id="qBody"></div><div class="lm-btns"><button id="qNo">Cancelar</button><button id="qOk">Confirmar</button></div></div></div>
+<div id="cpuNM"><div class="box"><h3>🤖 Ação do computador</h3><p id="cnMsg"></p><div class="cn-bar" id="cnBar"></div><button id="cnOk">Continuar ▶</button></div></div>
+<div id="manM"><div class="box"><button id="manClose">✕</button><h3>📖 Manual do jogo</h3><div id="manBody"></div></div></div>
 <div id="cred">© 2026 · Bruno Levita</div>
 <div id="pos"><div id="prc"></div><div id="pcard"></div><div id="pbody"><div id="pled"></div><div id="pbrand">AracajuPay</div><div id="pscr"><small id="pdesc"></small><b id="pamt"></b><em id="pok"></em></div><div id="pkeys"></div></div></div>
 <div id="menu"><div class="wrap"><div class="logo">🏙️</div><h1>ARACAJU <span>3D</span></h1><p class="sub">Compre ruas, construa casas e arranha-céus e domine a capital de Sergipe.</p><div class="seg" id="mode"><button data-m="0" class="on">📱 Neste aparelho</button><button data-m="1">🌐 Online</button></div>
 <div id="onl" class="onl" style="display:none;margin-bottom:14px"><div id="onl0"><button id="ocreate">➕ Criar sala</button><div class="or">ou entre com o código de um amigo</div><div class="jr"><input class="nm" id="ocode" placeholder="Código da sala" maxlength="8"><button id="ojoin">Entrar</button></div></div>
 <div id="onl1" style="display:none"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">Sala <b id="code" style="font-size:22px;letter-spacing:3px"></b><button id="oinv" class="pb">📨 Convidar</button><button id="mic" class="pb" style="display:none">🎙️ Entrar na voz</button></div><div id="plist" style="margin:10px 0;line-height:1.8"></div><small id="vst" style="opacity:.8"></small><div id="invBox" style="display:none;margin-top:8px"><small>Não foi possível copiar automaticamente. Selecione e copie o texto abaixo:</small><textarea id="invTxt" readonly rows="3" class="nm" style="margin-top:4px"></textarea></div>
 <p id="lobbyInfo" class="lobby-info wait">⏳ Aguardando jogadores…</p><div id="ohost" style="display:none;margin-top:8px;gap:8px;flex-wrap:wrap;align-items:center">CPUs <select id="ocpu" class="nm" style="width:70px;display:inline-block"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select> <button id="ostart" disabled>▶ Começar partida online</button><button id="oload" class="pb">📂 Carregar partida salva (nuvem)</button><div style="display:none;gap:6px;width:100%;margin-top:4px"><input id="ccode" class="nm" maxlength="8" placeholder="Código da partida na nuvem" style="flex:1;min-width:0"><button id="cget" class="pb">☁️ Retomar da nuvem</button></div><div id="asgBox" style="display:none;width:100%"><p class="lobby-info ok" style="margin:0 0 8px">💾 Partida salva carregada. Associe cada jogador salvo a uma pessoa da sala (o jogo já sugere pelo nome):</p><div id="asgRows"></div><div style="display:flex;gap:8px;margin-top:8px"><button id="ocont">▶ Continuar partida salva</button><button id="ocancel" class="pb">✕ Cancelar</button></div></div></div><small id="owait">Aguardando o anfitrião iniciar…</small></div></div>
-<button id="ldBtn" class="pb" style="margin:0 0 14px">📂 Carregar partida salva</button> <button id="resBtn" class="pb" style="display:none;margin:0 0 14px"></button>
+<button id="ldBtn" class="pb" style="margin:0 0 14px">📂 Carregar partida salva</button> <button id="resBtn" class="pb" style="display:none;margin:0 0 14px"></button> <button id="manBtn" class="pb" style="margin:0 0 14px">📖 Manual do jogo</button>
 <div class="mn"><small>💰 DINHEIRO INICIAL</small><div class="seg" id="mny"><button data-v="1000">R$ 1.000</button><button data-v="1500">R$ 1.500</button><button data-v="2500">R$ 2.500</button><button data-v="5000">R$ 5.000</button></div></div><div id="rows"></div><p class="hint">📷 Envie uma selfie para o boneco ficar parecido com você — a foto fica só no seu aparelho.<br>🎥 Câmera: arraste gira · dois dedos movem · pinça dá zoom · 🚁 modo drone</p><p class="foot">© 2026 · Desenvolvido por Bruno Levita</p></div><div class="bar"><button id="go">▶ Começar</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -415,12 +431,13 @@ function fireworks(){const c=T[0].pos;for(let b=0;b<7;b++)setTimeout(()=>{const 
 /* estado */
 let P=[],cur=0,busy=false,over=false,pend=null,ph='roll';
 const grp=g=>T.filter(t=>t.g===g),hc=t=>50+t.g*25;
-const elig=p=>T.filter(t=>t.ty=='p'&&t.own==p.id&&!t.mort&&t.h<5&&grp(t.g).every(u=>u.own==p.id&&!u.mort&&u.h>=t.h)&&p.money>=hc(t)).sort((a,b)=>a.h-b.h||a.g-b.g);
+const canBuildAt=(p,t)=>!!t&&t.ty=='p'&&t.own==p.id&&!t.mort&&t.h<5&&grp(t.g).every(u=>u.own==p.id&&!u.mort)&&p.money>=hc(t)&&p.builtTurn!==p.turns;
+const elig=p=>canBuildAt(p,T[p.pos])?[T[p.pos]]:[];
 function hud(){$('top').innerHTML=P.map((p,i)=>`<div class="chip ${i==cur?'on':''} ${p.out?'out':''}" style="--pc:${PC[i]}" data-pid="${i}"><i></i><div><b>${esc(p.name)}</b><span>${fm(p.money)}</span></div><em>${T.filter(t=>t.own==i).length}🏠</em></div>`).join('');
  [...$('top').children].forEach(el=>el.onclick=()=>showProps(P[+el.dataset.pid]));
  const p=P[cur],h=p&&ctl(p)&&!busy&&!over&&!tradeCtx;
  $('roll').disabled=!(h&&ph=='roll');$('buy').disabled=!(h&&ph=='act'&&pend&&p.money>=pend.pr);$('buy').textContent=pend?'🛒 Comprar '+fm(pend.pr):'🛒 Comprar';
- $('build').disabled=!(h&&elig(p).length);$('trade').disabled=!(h&&ph=='act'&&T.some(t=>t.own==p.id));$('end').disabled=!(h&&ph=='act')}
+ $('build').disabled=!(h&&ph=='act'&&elig(p).length);$('trade').disabled=!(h&&ph=='act'&&T.some(t=>t.own==p.id));$('end').disabled=!(h&&ph=='act')}
 function tinfo(i){const t=T[i],o=t.own>=0?P[t.own]:null;$('tile').style.setProperty('--tc',t.col||'#888');$('tile').innerHTML=`<b>📍 ${t.n}</b><span>${t.pr?fm(t.pr):''}${t.h?' · '+(t.h==5?'Arranha-céu':t.h+' casa(s)'):''}</span><em>${o?'Dono: '+esc(o.name):t.pr?'À venda':''}</em>`}
 async function hop(p,to,hg=.35,du=300){tinfo(p.pos);const a=p.m.position.clone(),[bx,bz]=lane(p.pos,p.id);p.m.rotation.y=Math.atan2(bx-a.x,bz-a.z);
  const u=p.m.userData,sd=p.sd=-(p.sd||1);await anim(du,t=>{p.m.position.set(a.x+(bx-a.x)*t,.26+Math.sin(t*Math.PI)*hg,a.z+(bz-a.z)*t);const w=Math.sin(t*Math.PI)*.45*sd;u.ll.rotation.x=w;u.rl.rotation.x=-w;u.la.rotation.x=-w;u.ra.rotation.x=w});u.ll.rotation.x=u.rl.rotation.x=u.la.rotation.x=u.ra.rotation.x=0;beep(300+p.pos*8,.06)}
@@ -434,7 +451,7 @@ async function show(t){if(t.hg)S.remove(t.hg);const g=t.hg=new THREE.Group();g.p
  if(t.h==5){last=tower();last.position.set(0,.26,-.55);g.add(last)}else for(let i=0;i<t.h;i++){const o=house(i);o.position.set(-.7+.47*i,.26,-.55);g.add(o);last=o}
  if(last)await anim(t.h==5?800:350,q=>last.scale.setScalar(Math.max(.01,q<.7?q/.7*1.15:1.15-.15*(q-.7)/.3)))}
 async function buy(p){const t=T[p.pos];await pay(p,t.pr,null,'Compra: '+t.n);setOwner(t,p.id);tinfo(p.pos);pend=null;beep(660);log(p.name+' comprou '+t.n)}
-async function build(p){const t=elig(p)[0];if(!t)return;await pay(p,hc(t),null,'Obra: '+t.n);t.h++;beep(520);log(p.name+(t.h==5?' construiu um HOTEL em ':' construiu casa em ')+t.n);await show(t)}
+async function build(p){const t=elig(p)[0];if(!t)return;await pay(p,hc(t),null,'Obra: '+t.n);t.h++;p.builtTurn=p.turns;beep(520);log(p.name+(t.h==5?' construiu um HOTEL em ':' construiu casa em ')+t.n);await show(t)}
 const rent=(t,d)=>t.ty=='R'?25*2**(T.filter(u=>u.ty=='R'&&u.own==t.own).length-1):t.ty=='U'?d*(T.filter(u=>u.ty=='U'&&u.own==t.own).length>1?10:4):Math.round(t.pr/10)*[1,3,6,10,14,22][t.h];
 $('pkeys').innerHTML=[1,2,3,4,5,6,7,8,9,'✕',0,'✓'].map(k=>`<span class="${k=='✕'?'r':k=='✓'?'g':''}" data-k="${k}">${k}</span>`).join('');
 $('pkeys').onclick=e=>{const el=e.target.closest('span[data-k]');if(!el||!tradeCtx)return;const k=el.dataset.k;
@@ -442,24 +459,26 @@ $('pkeys').onclick=e=>{const el=e.target.closest('span[data-k]');if(!el||!tradeC
  if(k=='✓'){confirmTrade();return}
  if(tradeAmt.length<7)tradeAmt+=k;$('pamt').textContent=tradeAmt?fm(+tradeAmt):'R$ 0'};
 let tradeCtx=null,tradeAmt='';
-function openTrade(){const p=P[cur];if(!ctl(p))return;const mine=T.filter(t=>t.own==p.id&&!t.mort);
- if(!mine.length){alert('Você não tem propriedades para negociar.');return}
- let selP=null,selB=null;
- $('trProps').innerHTML=mine.map((t,i)=>`<button class="tr-chip" data-i="${i}" style="--c:${t.col}">${esc(t.n)}</button>`).join('');
- const others=P.filter(q=>q!=p&&!q.out);
- if(!others.length){alert('Não há outro jogador para negociar.');return}
- $('trBuyers').innerHTML=others.map(q=>`<button class="tr-chip" data-id="${q.id}" style="--c:${PC[q.id]}">${esc(q.name)}</button>`).join('');
- [...$('trProps').children].forEach((b,i)=>b.onclick=()=>{[...$('trProps').children].forEach(x=>x.classList.remove('on'));b.classList.add('on');selP=mine[i];$('trNext').disabled=!(selP&&selB)});
- [...$('trBuyers').children].forEach(b=>b.onclick=()=>{[...$('trBuyers').children].forEach(x=>x.classList.remove('on'));b.classList.add('on');selB=P[+b.dataset.id];$('trNext').disabled=!(selP&&selB)});
- $('trNext').disabled=true;
- $('trNext').onclick=()=>{$('tradeSel').style.display='none';startTrade(selB,selP)};
- $('tradeSel').style.display='flex'}
+function openTrade(){const p=P[cur];if(!ctl(p))return;let mode='sell',selP=null,selB=null;
+ const others=P.filter(q=>q!=p&&!q.out);if(!others.length){toast('⚠️ Não há outro jogador para negociar.');return}
+ const pick=(box,arr,fn)=>[...box.children].forEach((b,i)=>{if(!arr[i])return;b.onclick=()=>{[...box.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');fn(arr[i]);$('trNext').disabled=!(selP&&(mode=='buy'||selB))}});
+ const render=()=>{selP=null;selB=null;$('trNext').disabled=true;[...$('trMode').children].forEach(b=>b.classList.toggle('on',b.dataset.m==mode));
+  if(mode=='sell'){const mine=T.filter(t=>t.own==p.id&&!t.mort);$('trL1').textContent='Qual propriedade você quer vender?';$('trL2').style.display='';$('trBuyers').style.display='';
+   $('trProps').innerHTML=mine.length?mine.map(t=>`<button class="tr-chip" style="--c:${t.col}">${esc(t.n)}</button>`).join(''):'<small>Você não tem propriedades livres (sem hipoteca) para vender.</small>';
+   $('trBuyers').innerHTML=others.map(q=>`<button class="tr-chip" style="--c:${PC[q.id]}">${esc(q.name)}</button>`).join('');
+   pick($('trProps'),mine,t=>selP=t);pick($('trBuyers'),others,q=>selB=q);$('trNext').textContent='Avançar para o pagamento'}
+  else{const theirs=T.filter(t=>t.pr&&t.own>=0&&t.own!=p.id&&!t.mort&&P[t.own]&&!P[t.own].out);$('trL1').textContent='Qual propriedade de outro jogador você quer comprar?';$('trL2').style.display='none';$('trBuyers').style.display='none';
+   $('trProps').innerHTML=theirs.length?theirs.map(t=>`<button class="tr-chip" style="--c:${t.col}">${esc(t.n)} <small>· ${esc(P[t.own].name)}</small></button>`).join(''):'<small>Nenhum outro jogador tem propriedades livres (sem hipoteca).</small>';
+   pick($('trProps'),theirs,t=>selP=t);$('trNext').textContent='Avançar: digitar a oferta'}};
+ [...$('trMode').children].forEach(b=>b.onclick=()=>{mode=b.dataset.m;render()});
+ $('trNext').onclick=()=>{$('tradeSel').style.display='none';if(mode=='sell')startTrade(selB,selP);else{const t=selP;startTrade(p,t,amt=>{if(amt)sendOffer(t,amt)},true)}};
+ render();$('tradeSel').style.display='flex'}
 $('trade').onclick=openTrade;$('trClose').onclick=()=>{$('tradeSel').style.display='none'};
-function startTrade(buyer,tile,cb){tradeCtx={buyer,tile,cb};tradeAmt='';
+function startTrade(buyer,tile,cb,offer){tradeCtx={buyer,tile,cb,offer};tradeAmt='';
  $('pcard').className='';$('pcard').style.background=`linear-gradient(135deg,${PC[buyer.id]},#222)`;
  $('pcard').innerHTML=`<s></s>${esc(buyer.name.toUpperCase())}<br><small>•••• •••• •••• ${1000+buyer.id*1111}</small><br><small>VÁLIDO 12/30</small>`;
  $('prc').innerHTML='';$('prc').className='';
- $('pdesc').textContent='Negociação: '+tile.n;$('pamt').textContent='R$ 0';$('pok').textContent='Digite o valor · ✕ apaga um dígito';
+ $('pdesc').textContent=(offer?'Oferta de compra: ':'Negociação: ')+tile.n+(offer&&tile.own>=0?' · dono: '+P[tile.own].name:'');$('pamt').textContent='R$ 0';$('pok').textContent='Digite o valor · ✕ apaga um dígito';
  $('pos').className='show trade'}
 function cancelTrade(){const cb=tradeCtx&&tradeCtx.cb;tradeCtx=null;tradeAmt='';$('pos').className='';if(cb)cb(null);else log('Negociação cancelada.')}
 async function confirmTrade(){if(!tradeCtx||!tradeAmt)return;const amt=+tradeAmt,{buyer,tile}=tradeCtx;
@@ -468,7 +487,7 @@ async function confirmTrade(){if(!tradeCtx||!tradeAmt)return;const amt=+tradeAmt
  $('pos').className='';const cb=tradeCtx.cb;tradeCtx=null;tradeAmt='';if(cb)cb(amt);else act('t',{ti:tile.i,bi:buyer.id,amt})}
 async function doTrade(v){const tile=T[v.ti],buyer=P.find(x=>x.id==v.bi),seller=P[cur];
  if(!tile||!buyer||tile.own!=seller.id||tile.mort||buyer.money<v.amt||v.amt<=0)return;
- if(buyer.cpu){const ev=cpuEval(buyer,tile,v.amt);if(!ev.ok){cpuNotice('🤖 '+buyer.name+' recusou a proposta de '+fm(v.amt)+' por '+tile.n+' ('+ev.why+')');return}}
+ if(buyer.cpu){const ev=cpuEval(buyer,tile,v.amt);if(!ev.ok){await cpuNotice('🤖 '+buyer.name+' recusou a proposta de '+fm(v.amt)+' por '+tile.n+' ('+ev.why+')');return}}
  busy=true;hud();await pay(buyer,v.amt,seller,'Negociação: '+tile.n);setOwner(tile,buyer.id);
  log(`${seller.name} vendeu ${tile.n} para ${buyer.name} por ${fm(v.amt)}`);busy=false;hud()}
 async function pos(p,amt,desc,to){const e=$('pos'),c=$('pcard');c.style.background=`linear-gradient(135deg,${PC[p.id]},#222)`;c.innerHTML=`<s></s>${p.name.toUpperCase()}<br><small>•••• •••• •••• ${1000+p.id*1111}</small><br><small>VÁLIDO 12/30</small>`;$('pamt').textContent=fm(amt);$('pdesc').textContent=desc+(to?' → '+to.name:'');$('pok').textContent='Insira o cartão…';$('prt'||'prc');$('prc').innerHTML=`ARACAJU<br>${p.name}<br>${desc}<br><b>${fm(amt)}</b><br>APROVADO`;e.className='show';await sleep(500);c.className='swipe';await sleep(600);$('pok').textContent='Processando…';beep(500,.05);await sleep(600);e.className='show ok';$('pok').textContent='✔ APROVADO';beep(880,.15);$('prc').className='print';await sleep(1300);e.className='';c.className='';$('prc').className=''}
@@ -551,26 +570,32 @@ async function finPay(p,lid,quit){const l=loansOf(p).find(x=>x.id==lid);if(!l||l
 function dueNow(p){return activeLoans(p).some(l=>l.parc.some(x=>!x.paid&&x.due<=(p.turns||0)))}
 async function collectDues(p){for(const l of activeLoans(p)){for(const x of l.parc){if(x.paid||x.due>(p.turns||0))continue;if(p.out)return;
   await pay(p,r2(x.amt/100),null,'Parcela '+x.n+'/'+l.n+' — empréstimo '+l.id);if(p.out)return;
-  x.paid=true;l.paid=l.parc.filter(y=>y.paid).length;l.bal-=x.amt;ll(l,'Parcela '+x.n+'/'+l.n+' cobrada automaticamente',-x.amt/100);fh(p,'Parcela '+x.n+'/'+l.n+' do empréstimo '+l.id+' (cobrança automática)',-x.amt/100);if(p.cpu)cpuNotice('🤖 '+p.name+' pagou a parcela '+x.n+'/'+l.n+' do empréstimo '+l.id+' ('+fm(x.amt/100)+')');
+  x.paid=true;l.paid=l.parc.filter(y=>y.paid).length;l.bal-=x.amt;ll(l,'Parcela '+x.n+'/'+l.n+' cobrada automaticamente',-x.amt/100);fh(p,'Parcela '+x.n+'/'+l.n+' do empréstimo '+l.id+' (cobrança automática)',-x.amt/100);if(p.cpu)cpuNotice('🤖 '+p.name+' pagou a parcela '+x.n+'/'+l.n+' do empréstimo '+l.id+' ('+fm(x.amt/100)+')');if(p.cpu)await noticeIdle();
   if(l.parc.every(y=>y.paid)){l.st='quitado';l.bal=0;ll(l,'Empréstimo quitado',0);fh(p,'Empréstimo '+l.id+' totalmente quitado',0)}}}}
 function cpuDebtChoice(p,need,canLoan,props){const lack=r2(need-p.money);
  if(canLoan){return{k:'loan',amt:Math.min(creditAvail(p),Math.max(CFG.minLoan,Math.ceil(lack/10)*10))}}
  const el=props.filter(t=>!mortReason(p,t)).sort((a,b)=>b.pr-a.pr||a.i-b.i);if(el.length)return{k:'mort',ti:el[0].i};
  const sl=props.filter(t=>!t.mort).sort((a,b)=>b.pr-a.pr||a.i-b.i);return{ti:sl[0].i,bi:-1,amt:0}}
-const nq=[];let nbusy=false;
-function cpuNotice(m){log(m);nq.push(m);if(nbusy)return;nbusy=true;(async()=>{while(nq.length){const t=nq.shift();toast(t,'cpu');await new Promise(r=>setTimeout(r,Math.max(3600,t.length*60)))}nbusy=false})()}
+const nq=[],nres=[];let nshow=false;
+function cpuNotice(m){log(m);return new Promise(res=>{nq.push({m,res});if(!nshow)nextNotice()})}
+function nextNotice(){const it=nq.shift();if(!it){nshow=false;nres.splice(0).forEach(f=>f());return}nshow=true;$('cnMsg').textContent=it.m;$('cnBar').innerHTML='<i></i>';$('cpuNM').style.display='flex';beep(700,.1);
+ let done=false;const close=()=>{if(done)return;done=true;clearTimeout(tm);$('cnOk').onclick=null;$('cpuNM').style.display='none';it.res();nextNotice()},tm=setTimeout(close,7000);$('cnOk').onclick=close}
+function noticeIdle(){return(nq.length||nshow)?new Promise(r=>nres.push(r)):Promise.resolve()}
 function cpuEval(b,t,amt){const val=(t.pr||0)+(t.h?Math.round(t.h*hc(t)*0.5):0);let max=val*1.15;
  if(t.ty=='p'){const g=T.filter(u=>u.g===t.g);if(g.every(u=>u.own==b.id||u===t))max=val*1.7;else if(g.some(u=>u.own==b.id))max=val*1.3}
  max=Math.round(max);if(b.money-amt<150)return{ok:false,why:'não quer ficar sem reserva de dinheiro'};
  if(amt>max)return{ok:false,why:'achou o preço alto demais; pagaria até cerca de '+fm(max)};return{ok:true}}
 function cpuFinNeeded(p){return activeLoans(p).length>0||T.some(t=>t.own==p.id&&t.mort)||p.money<200}
 async function cpuFinance(p){
- for(const t of T.filter(t=>t.own==p.id&&t.mort).sort((a,b)=>b.pr-a.pr||a.i-b.i)){if(p.out)return;if(p.money-redeemVal(t)>=300){await finRedeem(p,t);await sleep(1800)}}
- for(const l of activeLoans(p).slice().sort((a,b)=>b.rate-a.rate)){if(p.out)return;if(p.money-l.bal/100>=1500){await finPay(p,l.id,true);await sleep(1800)}}
- if(!p.out&&p.money<200&&activeLoans(p).length<CFG.maxLoans&&creditAvail(p)>=CFG.minLoan){finLoan(p,Math.min(creditAvail(p),400),'padrao');await sleep(1800)}}
+ for(const t of T.filter(t=>t.own==p.id&&t.mort).sort((a,b)=>b.pr-a.pr||a.i-b.i)){if(p.out)return;if(p.money-redeemVal(t)>=300){await finRedeem(p,t);await noticeIdle()}}
+ for(const l of activeLoans(p).slice().sort((a,b)=>b.rate-a.rate)){if(p.out)return;if(p.money-l.bal/100>=1500){await finPay(p,l.id,true);await noticeIdle()}}
+ if(!p.out&&p.money<200&&activeLoans(p).length<CFG.maxLoans&&creditAvail(p)>=CFG.minLoan){finLoan(p,Math.min(creditAvail(p),400),'padrao');await noticeIdle()}}
+function cpuSellEval(o,t,amt){const val=(t.pr||0)+(t.h?Math.round(t.h*hc(t)*0.5):0);let min=val*1.25;
+ if(t.ty=='p'){const g=T.filter(u=>u.g===t.g),mine=g.filter(u=>u.own==o.id).length;if(mine==g.length)min=val*2;else if(mine>1)min=val*1.5}
+ min=Math.round(min);return amt>=min?{ok:true}:{ok:false,why:'quer pelo menos cerca de '+fm(min)}}
 /*FIN-END*/
 function mortHTML(t){const v=mortVal(t),rv=redeemVal({mort:v});return`<p><b>${esc(t.n)}</b></p><p>Preço original de compra: <b>${fm(t.pr)}</b></p><p>Valor que você receberá (50%): <b>${fm(v)}</b></p><p>A propriedade continua sua, mas ficará <b>HIPOTECADA</b>: sem cobrança de aluguel até o resgate (${fm(rv)}).</p>`}
-function confirmBox(title,html,okText){return new Promise(res=>{$('qTitle').textContent=title;$('qBody').innerHTML=html;$('qOk').textContent=okText||'Confirmar';$('qM').style.display='flex';const done=v=>{$('qM').style.display='none';$('qOk').onclick=$('qNo').onclick=null;res(v)};$('qOk').onclick=()=>done(true);$('qNo').onclick=()=>done(false)})}
+function confirmBox(title,html,okText,noText){return new Promise(res=>{$('qTitle').textContent=title;$('qBody').innerHTML=html;$('qOk').textContent=okText||'Confirmar';$('qNo').textContent=noText||'Cancelar';$('qM').style.display='flex';const done=v=>{$('qM').style.display='none';$('qOk').onclick=$('qNo').onclick=null;res(v)};$('qOk').onclick=()=>done(true);$('qNo').onclick=()=>done(false)})}
 function askLoan(p,rate,preset,title,okTxt,noTxt){return new Promise(res=>{const av=creditAvail(p),nAct=activeLoans(p).length;let err='';
  if(nAct>=CFG.maxLoans)err='Limite de '+CFG.maxLoans+' empréstimos ativos atingido.';else if(av<CFG.minLoan)err='Sem limite de crédito disponível.';
  $('lnTitle').textContent=title;$('lnInfo').textContent='Saldo: '+fm(p.money)+' · Crédito disponível: '+fm(av)+' · Empréstimos ativos: '+nAct+'/'+CFG.maxLoans;
@@ -602,7 +627,7 @@ async function debtShow(p,need){while(true){const sel=await debtPick(p,need);
 async function applyDebtChoice(p,ch){if(ch.k=='loan'){finLoan(p,ch.amt,'padrao');return}if(ch.k=='mort'){finMortgage(p,T[ch.ti]);return}
  const t=T[ch.ti];if(ch.bi<0){mortgage(p,t);return}
  const b=P.find(x=>x.id==ch.bi);if(!b||t.own!=p.id||t.mort||b.money<ch.amt||ch.amt<=0)return;
- if(b.cpu){const ev=cpuEval(b,t,ch.amt);if(!ev.ok){cpuNotice('🤖 '+b.name+' recusou a proposta de '+fm(ch.amt)+' por '+t.n+' ('+ev.why+')');return}}
+ if(b.cpu){const ev=cpuEval(b,t,ch.amt);if(!ev.ok){await cpuNotice('🤖 '+b.name+' recusou a proposta de '+fm(ch.amt)+' por '+t.n+' ('+ev.why+')');return}}
  await pay(b,ch.amt,p,'Negociação: '+t.n);setOwner(t,b.id);log(`${p.name} vendeu ${t.n} para ${b.name} por ${fm(ch.amt)}`);hud()}
 async function resolveDebt(p,need){
  while(p.money<need){const props=T.filter(t=>t.own==p.id&&t.pr),canLoan=activeLoans(p).length<CFG.maxLoans&&creditAvail(p)>=CFG.minLoan;
@@ -612,15 +637,15 @@ async function resolveDebt(p,need){
   else if(ctl(p)){ch=await debtShow(p,need);if(online)act('m',ch)}
   else{ch=await new Promise(res=>{debtWait={res}})}
   if(ch.k=='bust'){$('debtModal').style.display='none';return false}
-  await applyDebtChoice(p,ch);if(p.cpu)await sleep(1800)}
+  await applyDebtChoice(p,ch);if(p.cpu)await noticeIdle()}
  $('debtModal').style.display='none';return true}
 /* ===== casa BANCO ===== */
-function waitAct(code){return new Promise(res=>waits.push({code,res}))}
+function waitAct(code,rid){return new Promise(res=>waits.push({code,rid,res}))}
 async function bankOffer(p){if(p.out)return;let amt=0;
  if(p.cpu){const av=creditAvail(p);if(activeLoans(p).length<CFG.maxLoans&&av>=CFG.minLoan&&p.money<400)amt=Math.min(av,500);await sleep(400)}
  else if(ctl(p)){log('🏦 '+p.name+' parou no Banco: oferta de empréstimo especial de '+CFG.jurosBanco+'%.');amt=(await askLoan(p,CFG.jurosBanco,500,'🏦 Banco — empréstimo especial ('+CFG.jurosBanco+'%)','✅ Aceitar oferta','✕ Recusar'))||0;if(online)act('lb',amt)}
  else{toast('🏦 '+p.name+' está avaliando a oferta do banco…');amt=(await waitAct('lb'))||0}
- if(amt>0){const l=finLoan(p,amt,'banco');if(l&&!p.cpu)toast('🏦 '+p.name+' contratou '+fm(amt)+' (juros '+CFG.jurosBanco+'%)',true)}else log(p.name+' recusou a oferta do banco.')}
+ if(amt>0){const l=finLoan(p,amt,'banco');if(l&&!p.cpu)toast('🏦 '+p.name+' contratou '+fm(amt)+' (juros '+CFG.jurosBanco+'%)',true);if(l&&p.cpu)await noticeIdle()}else log(p.name+' recusou a oferta do banco.')}
 /* ===== turno: cobrança de parcelas, persistência ===== */
 async function turnStart(){const p=P[cur];if(!p||over)return;if(p.out){setTimeout(end,300);return}
  if(!p.again)p.turns=(p.turns||0)+1;
@@ -635,14 +660,15 @@ let finOpen=false,finLock=false,finSig='';const opsDone=new Set();
 function finPlayer(){return online?P.find(x=>x.rid===me):P[cur]}
 function finCan(p){return !!p&&P[cur]===p&&ctl(p)&&!busy&&!over&&(ph=='roll'||ph=='act')&&!tradeCtx}
 const dtf=t=>new Date(t).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-function renderFin(force){const p=finPlayer();if(!p)return;const can=finCan(p),sig=JSON.stringify([p.money,p.loans,(p.hist||[]).length,T.map(t=>t.own+'|'+t.mort),can,p.turns]);if(!force&&sig==finSig)return;finSig=sig;
+function renderFin(force){const p=finPlayer();if(!p)return;const can=finCan(p),sig=JSON.stringify([p.money,P.map(q=>q.loans),(p.hist||[]).length,T.map(t=>t.own+'|'+t.mort),can,p.turns]);if(!force&&sig==finSig)return;finSig=sig;
  const loans=loansOf(p),avl=creditAvail(p),nAct=activeLoans(p).length,st=$('finBody').scrollTop;
  $('finTitle').textContent='🏦 EMPRÉSTIMOS & HIPOTECAS — '+p.name;
  let h=`<div class="fn-sum"><div><small>Saldo atual</small><b>${fm(p.money)}</b></div><div><small>Crédito disponível</small><b>${fm(avl)}</b><em>limite ${fm(CFG.creditLimit)}</em></div><div><small>Empréstimos ativos</small><b>${nAct}/${CFG.maxLoans}</b></div></div>`;
  if(!can)h+='<p class="fn-note">⏳ Você pode consultar tudo agora, mas só realiza operações na sua vez, com o jogo parado.</p>';
  h+=`<button class="fn-main" data-f="loan" ${can&&nAct<CFG.maxLoans&&avl>=CFG.minLoan?'':'disabled'}>💳 Solicitar empréstimo (juros simples de ${CFG.juros}%)</button>`;
- h+='<h4>📄 Meus empréstimos</h4>'+(loans.length?loans.map(l=>{const jur=(l.total-l.principal*100)/100,nx=l.parc.find(x=>!x.paid);
-  return`<div class="fn-card"><div class="fn-h"><b>${l.id} · ${l.kind=='banco'?'Especial '+l.rate+'%':'Padrão '+l.rate+'%'}</b><span class="fn-st ${l.st}">${l.st.toUpperCase()}</span></div><div class="fn-g"><span>Valor original</span><b>${fm(l.principal)}</b><span>Juros (${l.rate}%)</span><b>${fm(jur)}</b><span>Total devido</span><b>${fm(l.total/100)}</b><span>Parcelas pagas</span><b>${l.paid}/${l.n}</b><span>Parcelas restantes</span><b>${l.n-l.paid}</b><span>Saldo devedor</span><b>${fm(l.bal/100)}</b></div><div class="fn-pcs">${l.parc.map(x=>`<span class="${x.paid?'ok':''}">${x.n}ª parcela ${fm(x.amt/100)} ${x.paid?'✔ paga':'· vence em '+Math.max(0,x.due-(p.turns||0))+' turno(s) seu(s)'}</span>`).join('')}</div>${l.st=='ativo'&&nx?`<div class="fn-b"><button data-f="pay" data-lid="${l.id}" ${can&&p.money>=nx.amt/100?'':'disabled'}>Pagar próxima parcela (${fm(nx.amt/100)})</button><button data-f="quit" data-lid="${l.id}" ${can&&p.money>=l.bal/100?'':'disabled'}>Quitar saldo (${fm(l.bal/100)})</button></div>`:''}<details><summary>Movimentações deste empréstimo</summary>${l.log.map(x=>`<div class="fn-hi"><span>${dtf(x.t)}</span><span>${esc(x.txt)}</span><b>${x.val?fm(x.val):''}</b></div>`).join('')||'—'}</details></div>`}).join(''):'<p class="fn-note">Nenhum empréstimo.</p>');
+ const loanCard=(q,l,mine)=>{const jur=(l.total-l.principal*100)/100,nx=l.parc.find(x=>!x.paid);
+  return`<div class="fn-card"><div class="fn-h"><b>${l.id} · ${l.kind=='banco'?'Especial '+l.rate+'%':'Padrão '+l.rate+'%'}</b><span class="fn-st ${l.st}">${l.st.toUpperCase()}</span></div><div class="fn-g"><span>Valor original</span><b>${fm(l.principal)}</b><span>Juros (${l.rate}%)</span><b>${fm(jur)}</b><span>Total devido</span><b>${fm(l.total/100)}</b><span>Parcelas pagas</span><b>${l.paid}/${l.n}</b><span>Parcelas restantes</span><b>${l.n-l.paid}</b><span>Saldo devedor</span><b>${fm(l.bal/100)}</b></div><div class="fn-pcs">${l.parc.map(x=>`<span class="${x.paid?'ok':''}">${x.n}ª parcela ${fm(x.amt/100)} ${x.paid?'✔ paga':'· vence em '+Math.max(0,x.due-(q.turns||0))+' turno(s) de '+(mine?'você':esc(q.name))}</span>`).join('')}</div>${mine&&l.st=='ativo'&&nx?`<div class="fn-b"><button data-f="pay" data-lid="${l.id}" ${can&&p.money>=nx.amt/100?'':'disabled'}>Pagar próxima parcela (${fm(nx.amt/100)})</button><button data-f="quit" data-lid="${l.id}" ${can&&p.money>=l.bal/100?'':'disabled'}>Quitar saldo (${fm(l.bal/100)})</button></div>`:''}${mine?`<details><summary>Movimentações deste empréstimo</summary>${l.log.map(x=>`<div class="fn-hi"><span>${dtf(x.t)}</span><span>${esc(x.txt)}</span><b>${x.val?fm(x.val):''}</b></div>`).join('')||'—'}</details>`:''}</div>`};
+ h+='<h4>📄 Empréstimos por jogador</h4>'+[p,...P.filter(q=>q!==p)].map(q=>{const ls=loansOf(q),nA=ls.filter(l=>l.st=='ativo').length;return`<div class="fn-grp" style="--gc:${PC[q.id]}"><div class="fn-gh"><b>${esc(q.name)}${q===p?' (você)':''}${q.cpu?' 🤖':''}${q.out?' · falido':''}</b><span>${nA} ativo(s) · ${ls.length} no total</span></div>${ls.length?ls.map(l=>loanCard(q,l,q===p)).join(''):'<p class="fn-note">Nenhum empréstimo.</p>'}</div>`}).join('');
  const props=T.filter(t=>t.own==p.id&&t.pr);
  h+='<h4>🏠 Propriedades e hipotecas</h4>'+(props.length?props.map(t=>{const why=mortReason(p,t);
   return`<div class="fn-card"><div class="fn-h"><b><i style="background:${t.col}"></i>${esc(t.n)}</b>${t.mort?'<span class="fn-st hip">HIPOTECADA</span>':''}</div><div class="fn-g"><span>Preço original de compra</span><b>${fm(t.pr)}</b>${t.mort?`<span>Valor recebido na hipoteca</span><b>${fm(t.mort)}</b><span>Valor para resgatar (+${CFG.redeemFee}%)</span><b>${fm(redeemVal(t))}</b>`:`<span>Valor da hipoteca (50%)</span><b>${fm(mortVal(t))}</b>`}</div><div class="fn-b">${t.mort?`<button data-f="redeem" data-ti="${t.i}" ${can&&p.money>=redeemVal(t)?'':'disabled'}>Resgatar (${fm(redeemVal(t))})</button>`:`<button data-f="mort" data-ti="${t.i}" ${can&&!why?'':'disabled'}>Hipotecar (+${fm(mortVal(t))})</button>${why?`<small>${why}</small>`:''}`}</div></div>`}).join(''):'<p class="fn-note">Você ainda não possui propriedades.</p>');
@@ -656,6 +682,17 @@ async function fnClick(op,ds){const p=finPlayer();if(!p||finLock)return;
  if(op=='redeem'){const t=T[+ds.ti],v=redeemVal(t);if(await confirmBox('Resgatar hipoteca',`<p><b>${esc(t.n)}</b></p><p>Valor recebido na hipoteca: <b>${fm(t.mort)}</b></p><p>Taxa de ${CFG.redeemFee}%: <b>${fm(r2(v-t.mort))}</b></p><p>Total para resgatar: <b>${fm(v)}</b></p>`,'✅ Confirmar resgate'))sendFin({op:'redeem',ti:t.i});return}
  if(op=='pay'||op=='quit'){const l=loansOf(p).find(x=>x.id==ds.lid);if(!l)return;const nx=l.parc.find(x=>!x.paid),v=op=='quit'?l.bal/100:nx.amt/100;
   if(await confirmBox(op=='quit'?'Quitar empréstimo':'Pagar parcela',`<p>Empréstimo <b>${l.id}</b></p><p>Valor a pagar agora: <b>${fm(v)}</b></p><p>Saldo devedor atual: <b>${fm(l.bal/100)}</b></p>`,'✅ Confirmar pagamento'))sendFin({op,lid:l.id})}}
+function sendOffer(t,amt){if(finLock)return;finLock=true;act('g',{ti:t.i,amt,id:Date.now()+'-'+Math.random().toString(36).slice(2,7)});setTimeout(()=>{finLock=false},3500)}
+function askOffer(b,o,t,amt){return confirmBox('🛒 Oferta de compra para '+o.name,`<p><b>${esc(b.name)}</b> quer comprar <b>${esc(t.n)}</b> por <b>${fm(amt)}</b>.</p><p>Preço original da propriedade: ${fm(t.pr)}</p><p><b>${esc(o.name)}</b>, você aceita vender?</p>`,'✅ Aceitar a venda','✕ Recusar')}
+async function doOffer(v){const t=T[v.ti],b=P[cur];if(!t||!b||!v||opsDone.has(v.id))return;opsDone.add(v.id);
+ const o=P[t.own];if(!o||o===b||o.out||t.mort||!(v.amt>0)||b.money<v.amt)return;
+ busy=true;hud();let ok=false;log('🛒 '+b.name+' ofereceu '+fm(v.amt)+' por '+t.n+' (dono: '+o.name+')');
+ if(o.cpu){const ev=cpuSellEval(o,t,v.amt);ok=ev.ok;await cpuNotice(ok?'🤖 '+o.name+' aceitou vender '+t.n+' por '+fm(v.amt):'🤖 '+o.name+' recusou a oferta de '+fm(v.amt)+' por '+t.n+' ('+ev.why+')')}
+ else if(ctl(o)){ok=!!(await askOffer(b,o,t,v.amt));if(online)act('go',ok?1:0)}
+ else{toast('🛒 '+o.name+' está avaliando a oferta de '+b.name+'…');ok=!!(await waitAct('go',o.rid))}
+ if(ok){await pay(b,v.amt,o,'Compra de '+t.n);setOwner(t,b.id);log(b.name+' comprou '+t.n+' de '+o.name+' por '+fm(v.amt));fh(b,'Compra de '+t.n+' de '+o.name,-v.amt);fh(o,'Venda de '+t.n+' para '+b.name,v.amt)}
+ else if(!o.cpu)toast('✕ '+o.name+' recusou a oferta.');
+ busy=false;hud();persistCurrent()}
 async function doFin(v){const p=P[cur];if(!v||!p||opsDone.has(v.id))return;opsDone.add(v.id);busy=true;hud();
  try{if(v.op=='loan')finLoan(p,v.amt,'padrao');else if(v.op=='mort')finMortgage(p,T[v.ti]);else if(v.op=='redeem')await finRedeem(p,T[v.ti]);else if(v.op=='pay')await finPay(p,v.lid,false);else if(v.op=='quit')await finPay(p,v.lid,true)}catch(e){console.error(e)}
  busy=false;finLock=false;hud();persistCurrent();if(finOpen)renderFin(true)}
@@ -736,7 +773,7 @@ $('prClose').onclick=()=>{$('propm').style.display='none'};
 async function rollDice(){$('pip').style.display='block';beep(200);const v=[1+rnd()*6|0,1+rnd()*6|0];
  dice.forEach((d,i)=>{const o=[1,2,3,4,5,6].filter(x=>x!=v[i]);d.material=[o[0],o[1],v[i],o[2],o[3],o[4]].map(x=>MD[x-1]);d.visible=true});
  await anim(1100,t=>dice.forEach((d,i)=>{const u=1-t;d.rotation.set(u*18,.3+u*10*(i?1:-1),u*7);d.position.y=.62+Math.abs(Math.sin(t*9))*u*3}));return v}
-async function doRoll(){if(busy||over||!P.length)return;busy=true;ph='wait';hud();const p=P[cur];const v=await rollDice(),d=v[0]+v[1];log(`${p.name} tirou ${v[0]} + ${v[1]}`);
+async function doRoll(){if(busy||over||!P.length)return;busy=true;ph='wait';hud();const p=P[cur];const v=await rollDice(),d=v[0]+v[1];log(`${p.name} tirou ${v[0]} + ${v[1]}`);if(v[0]==v[1]&&!p.out)toast('🎲 Dados iguais! '+p.name+' joga de novo depois desta jogada.',true);
  let go=true;if(p.jail>0){if(v[0]==v[1]){p.jail=0;log('Duplas! Saiu da prisão')}else if(--p.jail==0){await pay(p,50,null,'Fiança');log('Pagou R$ 50 e saiu da prisão')}else{log('Preso... aguardando');go=false}}
  await sleep(600);p.again=false;
  if(go&&!p.out){await walk(p,d);await land(p,d);if(v[0]==v[1]&&!p.out&&!p.jail)p.again=true}
@@ -772,11 +809,11 @@ const Q=[],waits=[],seen={},vc={},ICE={iceServers:[{urls:'stun:stun.l.google.com
 async function doBuy(){const p=P[cur];if(!pend||p.money<pend.pr)return;busy=true;hud();if(!ctl(p))await showDeed(pend,4500);await buy(p);busy=false;hud()}
 async function doBuild(){busy=true;hud();await build(P[cur]);busy=false;hud()}
 function act(c,v){Q.push({s:online?me:undefined,c,v});if(online){myAct=[...myAct,[++aseq,c,v==null?0:v]].slice(-10);try{const q=room.presence({A:myAct});q&&q.catch&&q.catch(()=>{})}catch(e){console.error(e)}}}
-const okp=e=>e.c=='r'?ph=='roll':(e.c=='c'||e.c=='f')?ph!='wait':ph=='act';
-setInterval(()=>{if(P.length)for(let wi=waits.length-1;wi>=0;wi--){const w=waits[wi],qi=Q.findIndex(e=>e.s===P[cur].rid&&e.c==w.code);if(qi>=0){const e=Q.splice(qi,1)[0];waits.splice(wi,1);w.res(e.v)}}
+const okp=e=>e.c=='r'?ph=='roll':e.c=='f'?ph!='wait':ph=='act';
+setInterval(()=>{if(P.length)for(let wi=waits.length-1;wi>=0;wi--){const w=waits[wi],qi=Q.findIndex(e=>e.s===(w.rid!==undefined?w.rid:P[cur].rid)&&e.c==w.code);if(qi>=0){const e=Q.splice(qi,1)[0];waits.splice(wi,1);w.res(e.v)}}
  if(P.length&&cardWait){const i=Q.findIndex(e=>e.s===P[cur].rid&&(e.c=='k'||e.c=='kc'));if(i>=0){const e=Q.splice(i,1)[0],cw=cardWait;if(e.c=='k'){cw.pick=cw.four[e.v];cw.flip&&cw.flip(e.v)}else if(cw.pick){cardWait=null;hideCardModal();cw.res(cw.pick)}}}
  if(P.length&&debtWait){const i=Q.findIndex(e=>e.s===P[cur].rid&&e.c=='m');if(i>=0){const e=Q.splice(i,1)[0],dw=debtWait;debtWait=null;dw.res(e.v)}}
- if(busy||over||!P.length)return;const i=Q.findIndex(e=>e.s===P[cur].rid&&okp(e));if(i<0){while(Q.length>30)Q.shift();return}const e=Q.splice(i,1)[0];({r:doRoll,e:end,b:doBuy,c:doBuild,t:doTrade,k:()=>{},kc:()=>{},m:()=>{},f:doFin,lb:()=>{}})[e.c](e.v)},150);
+ if(busy||over||!P.length)return;const i=Q.findIndex(e=>e.s===P[cur].rid&&okp(e));if(i<0){while(Q.length>30)Q.shift();return}const e=Q.splice(i,1)[0];({r:doRoll,e:end,b:doBuy,c:doBuild,t:doTrade,k:()=>{},kc:()=>{},m:()=>{},f:doFin,lb:()=>{},g:doOffer,go:()=>{}})[e.c](e.v)},150);
 const SHP=['#e53935','#1e88e5','#43a047','#fb8c00','#8e24aa','#00acc1','#fdd835','#6d4c41','#ec407a','#546e7a','#7cb342','#ff7043','#3949ab','#00897b'];
 const cdist=(a,b)=>{const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),x=p(a),y=p(b);return Math.hypot(x[0]-y[0],x[1]-y[1],x[2]-y[2])};
 const sameCol=(a,b)=>cdist(a,b)<70;
@@ -876,7 +913,7 @@ $('oinv').onclick=async()=>{const t='Vem jogar Aracaju 3D comigo! Abra '+locatio
  else{$('vst').textContent='';$('invTxt').value=t;$('invBox').style.display='block';$('invTxt').select()}};
 $('invTxt').onclick=e=>e.target.select();
 $('ostart').onclick=()=>{if($('ostart').disabled)return;const ord=room.peers().filter(p=>p.kind=='viewer').map(p=>p.peer);if(ord.length+(+$('ocpu').value)<2)return;room.presence({st:{sd:1+Math.random()*1e9|0,ord,cpu:+$('ocpu').value,mn:startMoney}})};
-async function exitGame(){gen++;finOpen=false;waits.length=0;['finM','loanM','qM'].forEach(i=>$(i).style.display='none');setTimeout(refreshResume,50);cloudKey='';cloudSlot=0;cloudFirst=true;autoCloud=false;autoSlot=-1;$('c9').classList.remove('auto');$('c9').title='Salvar partida';onlineSave=null;asgMap={};asgSig='';$('asgBox').style.display='none';$('ostart').style.display='';lateWarned=false;published=false;iamhost=false;namedByUser=false;cards[0].removeEventListener('input',nameInput);$('deed').style.display='none';cardWait=null;debtWait=null;$('debtModal').style.display='none';$('cardm').style.display='none';const rm=room;room=null;online=false;started=false;myAct=[];aseq=0;Object.keys(seen).forEach(k=>delete seen[k]);Object.keys(seenChat).forEach(k=>delete seenChat[k]);myChatLog=[];chatSeq=0;chatOpen=false;Q.length=0;
+async function exitGame(){gen++;nq.length=0;nshow=false;$('cpuNM').style.display='none';$('manM').style.display='none';nres.splice(0).forEach(f=>f());finOpen=false;waits.length=0;['finM','loanM','qM'].forEach(i=>$(i).style.display='none');setTimeout(refreshResume,50);cloudKey='';cloudSlot=0;cloudFirst=true;autoCloud=false;autoSlot=-1;$('c9').classList.remove('auto');$('c9').title='Salvar partida';onlineSave=null;asgMap={};asgSig='';$('asgBox').style.display='none';$('ostart').style.display='';lateWarned=false;published=false;iamhost=false;namedByUser=false;cards[0].removeEventListener('input',nameInput);$('deed').style.display='none';cardWait=null;debtWait=null;$('debtModal').style.display='none';$('cardm').style.display='none';const rm=room;room=null;online=false;started=false;myAct=[];aseq=0;Object.keys(seen).forEach(k=>delete seen[k]);Object.keys(seenChat).forEach(k=>delete seenChat[k]);myChatLog=[];chatSeq=0;chatOpen=false;Q.length=0;
  if(rm){try{await rm.leave()}catch(e){}}
  if(mic){mic.getTracks().forEach(t=>t.stop());mic=null}
  Object.keys(vc).forEach(k=>{try{vc[k].close()}catch(e){}delete vc[k]});document.querySelectorAll('audio[id^="au"]').forEach(a=>a.remove());
@@ -906,6 +943,64 @@ function renderCloudSlots(list,mode){$('svSlots').innerHTML='<p style="margin:0 
   $('svSlots').append(d)})}
 async function cloudLoad(mode,slot,sn){try{if(mode=='loadonline'){cloudSlot=slot;autoCloud=true;markAuto();prepareOnlineLoad(sn)}else{await restoreGame(sn);cloudSlot=slot;autoCloud=true;markAuto()}}catch(e){console.error(e);toast('⚠️ Erro ao carregar a partida')}}
 $('ocancel').onclick=()=>{cloudSlot=0;autoCloud=false;onlineSave=null;asgMap={};asgSig='';$('asgBox').style.display='none';$('ostart').style.display='';try{room.presence({rs:null})}catch(e){}if(room)lobbyUpdate(room.peers().filter(p=>p.kind=='viewer'),true)};
+/* ===== MANUAL DO JOGO (com ilustrações) ===== */
+(function(){const st=document.createElement('style');st.textContent=`
+#manM{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;z-index:12;padding:12px}
+#manM .box{position:relative;background:linear-gradient(#1b2d44,#10243a);border:1px solid #ffffff22;border-radius:18px;padding:16px;width:100%;max-width:660px;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 50px #000a}
+#manM h3{margin:0 34px 8px 0;font-size:19px}
+#manClose{position:absolute;right:12px;top:12px;width:30px;height:30px;border-radius:50%;background:#ffffff22;color:#fff;font-size:15px;padding:0}
+#manBody{overflow:auto;flex:1;padding-right:4px;line-height:1.5;font-size:14px}
+.mn-nav{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px;position:sticky;top:0;background:#10243af2;padding:6px 0;z-index:1}
+.mn-nav button{padding:6px 10px;font-size:12px;border-radius:10px;background:#ffffff1a;color:#fff;border:1px solid #ffffff2a}
+#manBody section{margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #ffffff1a}
+#manBody h4{margin:0 0 6px;font-size:16px;color:#ffd54a}
+#manBody p{margin:6px 0}#manBody ul{margin:6px 0;padding-left:20px}#manBody li{margin:3px 0}
+.mn-ill{background:#ffffff0f;border-radius:14px;padding:10px;margin:8px 0;text-align:center;font-size:26px;letter-spacing:2px}
+.mn-ill small{display:block;font-size:12px;letter-spacing:0;opacity:.8;margin-top:4px}
+.mn-svg{width:100%;max-width:300px;display:block;margin:0 auto}
+.mn-key{background:#ffd54a22;border:1px solid #ffd54a88;border-radius:12px;padding:10px;margin:8px 0}
+.mn-rule{background:#4ec96a22;border:1px solid #4ec96a88;border-radius:12px;padding:10px;margin:8px 0}
+.mn-warn{background:#ef535022;border:1px solid #ef535088;border-radius:12px;padding:10px;margin:8px 0}
+.mn-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+.mn-card{width:74px;height:100px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:30px;border:2px solid #e9c451;color:#fff;text-align:center;font-size:12px;font-weight:700;gap:4px}
+.mn-card b{font-size:34px}.mn-card.srt{background:linear-gradient(160deg,#2e9e4f,#1b5e2e)}.mn-card.rev{background:linear-gradient(160deg,#d32f2f,#7a1515)}
+.mn-steps{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+.mn-steps span{background:#ffffff14;border-radius:12px;padding:8px 10px;text-align:center;font-size:12px;min-width:70px}.mn-steps span b{display:block;font-size:22px}
+table.mn-t{width:100%;border-collapse:collapse;font-size:12px;margin:6px 0}table.mn-t td,table.mn-t th{border:1px solid #ffffff22;padding:5px 6px;text-align:center}table.mn-t th{background:#ffffff14}
+`;document.head.appendChild(st)})();
+const PIP={1:[[27,27]],2:[[14,14],[40,40]],3:[[14,14],[27,27],[40,40]],4:[[14,14],[40,14],[14,40],[40,40]],5:[[14,14],[40,14],[27,27],[14,40],[40,40]],6:[[14,12],[40,12],[14,27],[40,27],[14,42],[40,42]]};
+const dieSvg=(n,x)=>`<g transform="translate(${x},8)"><rect width="54" height="54" rx="10" fill="#efe4c8" stroke="#222" stroke-width="3"/>${PIP[n].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#111"/>`).join('')}</g>`;
+function mapSvg(){const S=18;let r='';T.forEach(t=>{let gx,gy,i=t.i;if(i<=12){gx=12-i;gy=12}else if(i<=24){gx=0;gy=24-i}else if(i<=36){gx=i-24;gy=0}else{gx=12;gy=i-36}
+ const em={S:'🏁',J:'🔒',F:'🌳',G:'👮',C:t.n=='Revés'?'❗':'🍀',T:'💰',B:'🏦',R:'🚆',U:'💡'}[t.ty]||'';
+ r+=`<rect x="${gx*S}" y="${gy*S}" width="${S-1}" height="${S-1}" rx="2" fill="${t.col||'#888'}"/>`+(em?`<text x="${gx*S+S/2-.5}" y="${gy*S+S*.74}" font-size="11" text-anchor="middle">${em}</text>`:'')});
+ return`<svg viewBox="0 0 234 234" class="mn-svg"><rect x="${S}" y="${S}" width="${S*11-1}" height="${S*11-1}" rx="6" fill="#2f6f3e"/><text x="117" y="110" font-size="20" font-weight="800" text-anchor="middle" fill="#fff">ARACAJU</text><text x="117" y="130" font-size="11" text-anchor="middle" fill="#cfe">tabuleiro com 48 casas</text>${r}</svg>`}
+function buildManual(){const secs=[['m1','🎯 Objetivo'],['m2','🧩 Preparação'],['m3','🎲 Sua vez'],['m4','🗺️ Tabuleiro'],['m5','🛒 Comprar'],['m6','💸 Aluguel'],['m7','🏗️ Construir'],['m8','🍀 Sorte/Revés'],['m9','🔒 Prisão'],['m10','🏁 Largada/Imposto/Banco'],['m11','🏦 Empréstimos'],['m12','🤝 Negociar'],['m13','⚠️ Dívidas'],['m14','🤖 CPU'],['m15','🎥 Botões'],['m16','🌐 Online'],['m17','❓ Perguntas']];
+ return`<div class="mn-nav">${secs.map(x=>`<button data-go="${x[0]}">${x[1]}</button>`).join('')}</div>
+<section id="m1"><h4>🎯 1. Objetivo do jogo</h4><p>Fique <b>rico</b> comprando ruas e empresas de <b>Aracaju</b>, construindo casas e hotéis e cobrando aluguel dos amigos. Quem ficar sem dinheiro e sem como pagar vai à <b>falência</b> e sai da partida.</p><div class="mn-key">🏆 <b>Quem for o último jogador na partida, vence!</b></div><div class="mn-ill">💰 🏠 🏨 → 🏆<small>juntar dinheiro, construir e vencer</small></div></section>
+<section id="m2"><h4>🧩 2. Preparação</h4><ul><li>Podem jogar de <b>2 a 6 jogadores</b>: pessoas, computador (🤖 CPU) ou amigos pela internet.</li><li>Cada jogador escolhe <b>nome</b>, <b>cores</b> e (se quiser) uma <b>foto</b> para o rosto do boneco.</li><li>Não pode haver dois jogadores com a <b>mesma cor de roupa</b>.</li><li>Escolha o <b>dinheiro inicial</b>: R$ 1.000, R$ 1.500, R$ 2.500 ou R$ 5.000.</li><li>Todos começam na casa <b>Largada</b> 🏁.</li></ul></section>
+<section id="m3"><h4>🎲 3. A sua vez</h4><div class="mn-steps"><span><b>🎲</b>1. Jogar dados</span><span><b>🚶</b>2. Boneco anda</span><span><b>🏠</b>3. Casa onde parou</span><span><b>🤝</b>4. Construir, negociar...</span><span><b>⏭️</b>5. Encerrar</span></div>
+<p>Toque em <b>🎲 Jogar dados</b>. O boneco anda a soma dos dois dados, casa por casa. Depois veja o que acontece na casa e, se quiser, construa, negocie ou peça empréstimo. Por fim toque em <b>⏭️ Encerrar</b>.</p>
+<div class="mn-key"><b>⭐ DUPLAS: por que o jogador joga duas vezes seguidas?</b><p>Quando os <b>dois dados saem iguais</b> (por exemplo 5 e 5), o jogador ganha <b>outra jogada</b> depois de terminar a atual. Isso pode se repetir várias vezes! <b>Não é erro do jogo:</b> é a regra das duplas. Aparece o aviso “🎲 Dados iguais!”.</p><svg viewBox="0 0 190 70" class="mn-svg">${dieSvg(5,8)}<text x="95" y="45" font-size="28" font-weight="800" text-anchor="middle" fill="#ffd54a">=</text>${dieSvg(5,126)}</svg><p style="text-align:center">Dados iguais = joga de novo! 🎉</p></div>
+<p>Se estiver na <b>prisão</b>, uma dupla também faz o jogador sair.</p></section>
+<section id="m4"><h4>🗺️ 4. O tabuleiro</h4>${mapSvg()}<p>São <b>48 casas</b> em volta da praça central. O jogo anda no sentido anti-horário a partir da Largada.</p><table class="mn-t"><tr><th>Casa</th><th>O que é</th></tr><tr><td>🟦🟥🟨 Ruas</td><td>27 ruas e avenidas de Aracaju, em 10 grupos de cores</td></tr><tr><td>🚆🚌🚇⛴️🚋✈️</td><td>6 companhias de transporte</td></tr><tr><td>💡🚰🔥</td><td>3 companhias de serviço (luz, água, gás)</td></tr><tr><td>🍀 / ❗</td><td>Sorte (coisa boa) e Revés (coisa ruim)</td></tr><tr><td>💰 Imposto</td><td>Pague R$ 150</td></tr><tr><td>🏦 Banco</td><td>Oferta opcional de empréstimo (só se parar nela)</td></tr><tr><td>🏁 Largada</td><td>Ganhe R$ 200 e veja os fogos de artifício</td></tr><tr><td>🔒 Prisão / 👮 Vá para a Prisão</td><td>Veja a seção Prisão</td></tr><tr><td>🌳 Parque da Sementeira</td><td>Descanso: nada acontece</td></tr></table></section>
+<section id="m5"><h4>🛒 5. Comprar uma propriedade</h4><p>Parou numa rua ou empresa <b>sem dono</b>? Toque em <b>🛒 Comprar</b>. Aparece a <b>carta da propriedade</b> com todos os preços. Depois:</p><ul><li><b>✅ Confirmar compra</b>: você paga na maquininha de cartão.</li><li><b>✕ Desistir</b>: não compra e o jogo continua.</li></ul><p>A propriedade ganha um balão com a cor e o nome do <b>DONO</b>. Você pode tocar no cartão de um jogador (no topo) para ver tudo o que ele tem e tocar numa propriedade para rever a carta.</p></section>
+<section id="m6"><h4>💸 6. Aluguel</h4><p>Parou na propriedade de outro jogador? Você paga <b>aluguel</b> a ele (na maquininha).</p><table class="mn-t"><tr><th>Rua com</th><th>0 casas</th><th>1</th><th>2</th><th>3</th><th>4</th><th>Hotel</th></tr><tr><td>Aluguel</td><td>10% do preço</td><td>×3</td><td>×6</td><td>×10</td><td>×14</td><td>×22</td></tr></table><ul><li><b>Companhias de transporte</b>: R$ 25, 50, 100, 200, 400 ou 800, conforme quantas o dono tem.</li><li><b>Companhias de serviço</b>: soma dos dados × 4 (dono com 1) ou × 10 (dono com 2 ou 3).</li><li>Propriedade <b>HIPOTECADA</b> não cobra aluguel.</li></ul></section>
+<section id="m7"><h4>🏗️ 7. Construir casas e hotéis</h4><div class="mn-rule"><b>Regra do botão 🏗️ Construir</b><ul><li>Você precisa ter <b>todas as ruas da mesma cor</b> (grupo completo, sem hipoteca).</li><li>Você precisa ter <b>parado</b> numa dessas ruas nesta jogada.</li><li>Só dá para construir <b>naquela rua em que você parou</b>, <b>uma vez por jogada</b>.</li></ul></div><div class="mn-ill">🏠 → 🏠🏠 → 🏠🏠🏠 → 🏠🏠🏠🏠 → 🏨<small>4 casas e depois o hotel (arranha-céu)</small></div><p>O custo é igual para casa e hotel e depende do grupo (de R$ 50 no 1º grupo a R$ 275 no 10º). Mais construções = aluguel muito maior!</p></section>
+<section id="m8"><h4>🍀❗ 8. Sorte e Revés</h4><p>Ao parar numa casa de <b>Sorte</b> ou <b>Revés</b>, aparecem <b>4 cartas viradas</b>. Escolha uma: ela <b>vira</b> e mostra o texto grande. Leia e toque em <b>Continuar ▶</b>. Quando é a vez do computador, todos veem a carta que ele escolheu.</p><div class="mn-row"><div class="mn-card srt"><b>🍀</b>SORTE</div><div class="mn-card rev"><b>❗</b>REVÉS</div></div><ul><li>🍀 <b>Sorte</b>: só coisas boas (ganhar dinheiro, avançar casas).</li><li>❗ <b>Revés</b>: só coisas ruins (pagar, voltar casas, ir para a prisão).</li></ul></section>
+<section id="m9"><h4>🔒 9. Prisão</h4><p>Quem para na casa <b>👮 Vá para a Prisão</b> (ou tira essa carta) vai para a <b>🔒 Prisão</b>. Para sair:</p><ul><li>Tire uma <b>dupla</b> nos dados: sai na hora e anda.</li><li>Ou tente 2 vezes: se não sair dupla, na segunda vez você <b>paga R$ 50</b> e anda.</li></ul></section>
+<section id="m10"><h4>🏁 10. Largada, Imposto e Banco</h4><ul><li>🏁 <b>Largada</b>: toda vez que passa ou para, ganha <b>R$ 200</b> e estouram fogos!</li><li>💰 <b>Imposto</b>: pague R$ 150.</li><li>🏦 <b>Banco</b>: se você <b>parar</b> nela, o banco oferece um <b>empréstimo especial de 5%</b>. Você aceita ou recusa. Só passar por ela não oferece nada. A casa Banco não se compra.</li></ul></section>
+<section id="m11"><h4>🏦 11. Empréstimos e Hipotecas</h4><p>O botão roxo <b>EMPRÉSTIMOS &amp; HIPOTECAS</b> abre o painel financeiro (você pode consultar a qualquer hora; as operações só na sua vez, com o jogo parado).</p><div class="mn-rule"><b>💳 Empréstimo</b><ul><li>Juros simples de <b>10%</b>, cobrados uma única vez (no Banco: <b>5%</b>).</li><li>Pago em <b>3 parcelas</b>, uma a cada 3 jogadas suas.</li><li>No máximo <b>2 empréstimos</b> ao mesmo tempo, dentro do limite de crédito (R$ 2.000).</li></ul></div><div class="mn-ill">💰 R$ 1.000 → +10% = R$ 1.100 → 3 parcelas<small>Você pode pagar uma parcela ou quitar tudo antes</small></div><div class="mn-rule"><b>🏠 Hipoteca</b><ul><li>Você recebe <b>50% do preço original</b> da propriedade.</li><li>Ela continua sua, mas fica <b>HIPOTECADA</b>: sem aluguel, sem construir e sem vender.</li><li>Para <b>resgatar</b>, você paga o que recebeu <b>+10%</b>.</li><li>Propriedade com casas ou hotel não pode ser hipotecada.</li></ul></div><div class="mn-ill">🏠 → 💰 → 🔒 → (resgate +10%) → 🏠<small>botão laranja = Hipotecar · botão azul = Resgatar</small></div><p>No painel você vê os empréstimos de <b>cada jogador</b>, separados por grupo.</p></section>
+<section id="m12"><h4>🤝 12. Negociar</h4><ul><li><b>💰 Vender</b>: escolha a propriedade e o jogador, depois digite o preço na maquininha. O botão vermelho <b>✕ apaga</b> o último número; com o visor vazio, ele <b>desiste</b>. O verde <b>✓ confirma</b>.</li><li><b>🛒 Fazer oferta de compra</b>: escolha a propriedade de outro jogador e digite quanto você oferece. O dono <b>aceita ou recusa</b>. Se aceitar, você paga na maquininha.</li></ul><p>O computador <b>nem sempre aceita</b>: ele recusa propostas ruins e diz até quanto pagaria ou quanto quer receber.</p></section>
+<section id="m13"><h4>⚠️ 13. Dívidas e falência</h4><p>Ninguém fica com <b>saldo negativo</b>. Se você precisar pagar e não tiver dinheiro, abre a <b>tela de Dívida</b> com as opções:</p><ul><li>💳 pegar um empréstimo;</li><li>🏛️ hipotecar uma propriedade;</li><li>🏦 vender uma propriedade ao banco (50% do preço);</li><li>🤝 vender a um jogador (você digita o preço);</li><li>💀 declarar falência.</li></ul><p>Se sobrar dinheiro, fica no seu saldo. Se não conseguir pagar, você vai à <b>falência</b>: seu boneco sai do tabuleiro.</p></section>
+<section id="m14"><h4>🤖 14. O computador (CPU)</h4><p>Quando o computador pega empréstimo, hipoteca, paga parcela, quita ou resgata, aparece um <b>aviso azul 🤖</b> na tela por <b>7 segundos</b> (toque em <b>Continuar ▶</b> para seguir mais rápido).</p></section>
+<section id="m15"><h4>🎥 15. Câmera e botões</h4><ul><li>Arraste: gira · dois dedos: move · pinça ou roda do mouse: zoom.</li><li>🗺️ visão geral · ⬇️ de cima · 🎯 seguir o jogador · ↻ girar · 🚁 modo drone (voa em cima do boneco).</li><li>🎙️ voz · 💬 chat (online) · 💾 salvar · 📖 este manual · 🚪 sair.</li><li>A <b>câmera redonda</b> mostra os dados rolando no centro do tabuleiro.</li></ul></section>
+<section id="m16"><h4>🌐 16. Jogar online com amigos</h4><ul><li>Crie uma sala, toque em <b>📨 Convidar</b> e mande o link pelo WhatsApp.</li><li>Para começar, é preciso <b>pelo menos 2 jogadores</b> (1 convidado ou 1 CPU).</li><li>Use o <b>chat</b> (💬) e a <b>voz</b> (🎙️) durante a partida.</li><li>O anfitrião pode <b>salvar</b> a partida e continuar depois.</li></ul></section>
+<section id="m17"><h4>❓ 17. Perguntas rápidas</h4><ul><li><b>Por que o jogador jogou duas vezes?</b> Tirou dados iguais (dupla). Joga de novo!</li><li><b>Por que o botão Construir está apagado?</b> Você precisa ter parado numa rua sua, com o grupo de cor completo, e ainda não ter construído nesta jogada.</li><li><b>Por que o computador não quis comprar a minha propriedade?</b> O preço estava alto demais para ele.</li><li><b>Posso ficar devendo?</b> Não: o jogo abre a tela de dívida.</li><li><b>Por que a propriedade não cobrou aluguel?</b> Ela está hipotecada.</li></ul></section>`}
+let manBuilt=false;
+function showManual(){if(!manBuilt){$('manBody').innerHTML=buildManual();manBuilt=true;$('manBody').onclick=e=>{const b=e.target.closest('[data-go]');if(b){const el=document.getElementById(b.dataset.go);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}}}$('manM').style.display='flex'}
+$('manBtn').onclick=showManual;$('c10').onclick=showManual;$('manClose').onclick=()=>{$('manM').style.display='none'};
+
+(function(){const b=$('bot'),f=()=>document.documentElement.style.setProperty('--botH',b.offsetHeight+'px');if(window.ResizeObserver)new ResizeObserver(f).observe(b);addEventListener('resize',f);f()})();
 refreshResume();
 /* câmera */
 let az=.785,el=1,rad=58;const tg=new THREE.Vector3(),ptr=new Map(),cvs=R.domElement;
