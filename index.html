@@ -1128,9 +1128,12 @@ $('ocancel').onclick=()=>{cloudSlot=0;autoCloud=false;onlineSave=null;asgMap={};
 #manM .box{position:relative;background:linear-gradient(#1b2d44,#10243a);border:1px solid #ffffff22;border-radius:18px;padding:16px;width:100%;max-width:660px;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 50px #000a}
 #manM h3{margin:0 34px 8px 0;font-size:19px}
 #manClose{position:absolute;right:12px;top:12px;width:30px;height:30px;border-radius:50%;background:#ffffff22;color:#fff;font-size:15px;padding:0}
-#manBody{overflow:auto;flex:1;padding-right:4px;line-height:1.5;font-size:14px}
-.mn-nav{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px;position:sticky;top:0;background:#10243af2;padding:6px 0;z-index:1}
-.mn-nav button{padding:6px 10px;font-size:12px;border-radius:10px;background:#ffffff1a;color:#fff;border:1px solid #ffffff2a}
+#manBody{position:relative;overflow:auto;flex:1;padding-right:4px;line-height:1.5;font-size:14px}
+.mn-nav{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;margin:0 0 12px;position:sticky;top:0;background:#10243af7;padding:6px 0;z-index:2;-webkit-overflow-scrolling:touch}
+.mn-nav::-webkit-scrollbar{height:4px}.mn-nav::-webkit-scrollbar-thumb{background:#ffffff44;border-radius:4px}
+.mn-nav button{flex:none;white-space:nowrap;padding:8px 12px;font-size:12px;border-radius:10px;background:#ffffff1a;color:#fff;border:1px solid #ffffff2a}
+@keyframes mnflash{0%{background:#ffd54a55}100%{background:transparent}}
+#manBody section.mn-flash{animation:mnflash 1.4s ease-out;border-radius:10px}
 #manBody section{margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #ffffff1a}
 #manBody h4{margin:0 0 6px;font-size:16px;color:#ffd54a}
 #manBody p{margin:6px 0}#manBody ul{margin:6px 0;padding-left:20px}#manBody li{margin:3px 0}
@@ -1179,7 +1182,7 @@ function buildManual(){const secs=[['m1','🎯 Objetivo'],['m2','🧩 Preparaç�
 <div class="mn-rule"><b>🏥 Hospital</b><ul><li>Quem para no Hospital pode contratar o <b>Plano de Saúde</b> (R$ 100): ele <b>cancela o próximo Revés</b> que cair em você (uma vez).</li><li>Depois responde ao <b>Quiz de Saúde</b>: acertou, ganha <b>R$ 80</b>; errou, não perde nada.</li><li>Algumas cartas de <b>Revés</b> mandam você ao Hospital (“Mal súbito”, “Acidente doméstico”), onde se paga uma consulta (R$ 60 ou R$ 90) que vai para o cofre do Parque.</li></ul></div>
 <div class="mn-rule"><b>📈 Bolsa de Valores</b><ul><li>Existem <b>6 ações</b> de empresas de Aracaju. Os preços <b>sobem e descem</b> a cada rodada completa, com notícias que movem o mercado.</li><li>O que acontece no jogo também mexe nos preços: construir casas (imóveis), comprar companhias (energia e porto) e parar na Orla (turismo).</li><li><b>Ao parar na Bolsa:</b> compre e venda à vontade, sem corretagem.</li><li><b>Pelo botão 📈 Bolsa:</b> na sua vez, 1 operação por turno, com corretagem de 3%.</li><li><b>Dividendos:</b> ao passar pela Largada você recebe 3% do valor das suas ações.</li><li>Vender ações também ajuda a <b>pagar dívidas</b>.</li></ul><div class="mn-ill">📉 compre barato → 📈 venda caro<small>Cuidado: o preço também cai! Não ponha todo o dinheiro numa ação só.</small></div></div></section>`}
 let manBuilt=false;
-function showManual(){if(!manBuilt){$('manBody').innerHTML=buildManual();manBuilt=true;$('manBody').onclick=e=>{const b=e.target.closest('[data-go]');if(b){const el=document.getElementById(b.dataset.go);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}}}$('manM').style.display='flex'}
+function showManual(){if(!manBuilt){$('manBody').innerHTML=buildManual();manBuilt=true;$('manBody').onclick=e=>{const b=e.target.closest('[data-go]');if(b){const el=document.getElementById(b.dataset.go),body=$('manBody'),nav=body.querySelector('.mn-nav');if(el){const top=Math.max(0,el.offsetTop-(nav?nav.offsetHeight:0)-6);body.scrollTo({top,behavior:'smooth'});el.classList.remove('mn-flash');void el.offsetWidth;el.classList.add('mn-flash')}}}}$('manM').style.display='flex'}
 $('manBtn').onclick=showManual;$('c10').onclick=showManual;$('manClose').onclick=()=>{$('manM').style.display='none'};
 
 (function(){const b=$('bot'),f=()=>document.documentElement.style.setProperty('--botH',b.offsetHeight+'px');if(window.ResizeObserver)new ResizeObserver(f).observe(b);addEventListener('resize',f);f()})();
