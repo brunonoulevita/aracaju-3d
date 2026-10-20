@@ -99,7 +99,7 @@ h1{margin:4px 0;color:var(--a)}
 #pip{position:fixed;left:10px;bottom:calc(env(safe-area-inset-bottom,0px) + var(--botH,150px) + 10px);width:104px;height:104px;border-radius:50%;overflow:hidden;border:3px solid var(--a);box-shadow:0 6px 18px #000a;z-index:2;display:none;background:#000;pointer-events:none}
 #pip canvas{width:100%;height:100%;display:block}
 #pip small{position:absolute;bottom:6px;left:0;right:0;text-align:center;font:700 10px system-ui;text-shadow:0 1px 3px #000}
-@media(min-width:700px){#pip{width:170px;height:170px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px)}#pip small{font-size:13px;bottom:10px}}
+@media(min-width:700px){#pip{width:170px;height:170px;bottom:calc(env(safe-area-inset-bottom,0px) + var(--botH,150px) + 10px)}#pip small{font-size:13px;bottom:10px}}
 @media(min-width:700px){#pos{top:15%}}
 #hudtop{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:60px;display:flex;flex-direction:column;align-items:flex-start;pointer-events:none;z-index:1}
 #hudtop #top{pointer-events:auto}
@@ -300,9 +300,11 @@ h1{margin:4px 0;color:var(--a)}
 #cardm>.box,#debtModal>.box,#tradeSel>.box,#saveM>.box,#quizM>.box,#loanM>.box,#qM>.box,#cpuNM>.box{margin:auto}
 @media (max-height:720px){#cardm>.box{padding:12px;max-width:340px}#cardm #cmCards{gap:8px}#cmSub{margin:-4px 0 8px}#cardm h3{margin-bottom:10px}}
 #roll.again{animation:rgl 1s ease-in-out infinite}@keyframes rgl{50%{box-shadow:0 0 0 6px #ffd54a88,0 0 24px #ffd54a}}
+#fal{background:linear-gradient(#7a1c1c,#2b0a0a)}
+.bk-note{background:#37474f;border:1px solid #90a4ae;border-radius:10px;padding:8px 10px;margin:0 0 8px;font-size:13px;line-height:1.4;color:#fff}
 </style></head><body>
 <div id="hudtop"><div id="top"></div><div id="tile"></div></div>
-<div id="bot"><div id="log">Arraste para girar · pinça/scroll para zoom</div><div id="btns"><button id="roll">🎲 Jogar dados</button><button id="buy">🛒 Comprar</button><button id="build">🏗️ Construir</button><button id="trade">🤝 Negociar</button><button id="fin">EMPRÉSTIMOS &amp; HIPOTECAS</button><button id="bolsa">📈 Bolsa</button><button id="end">⏭️ Encerrar</button></div></div>
+<div id="bot"><div id="log">Arraste para girar · pinça/scroll para zoom</div><div id="btns"><button id="roll">🎲 Jogar dados</button><button id="buy">🛒 Comprar</button><button id="build">🏗️ Construir</button><button id="trade">🤝 Negociar</button><button id="fin">EMPRÉSTIMOS &amp; HIPOTECAS</button><button id="bolsa">📈 Bolsa</button><button id="fal">💀 Falência</button><button id="end">⏭️ Encerrar</button></div></div>
 <div id="cam"><button id="c1" title="Visão geral">🗺️</button><button id="c2" title="Visão de cima">⬇️</button><button id="c3" title="Seguir jogador">🎯</button><button id="c4" title="Girar">↻</button><button id="c5" title="Modo drone">🚁</button><button id="c6" title="Entrar na voz (ligar o microfone)" style="display:none">🎙️</button><button id="c8" title="Chat" style="display:none;position:relative">💬<i id="cbadge"></i></button><button id="c9" title="Salvar partida">💾</button><button id="c10" title="Manual do jogo">📖</button><button id="c11" title="Tela cheia">⛶</button><button id="c7" title="Sair da partida">🚪</button></div>
 <div id="pip"><canvas id="pipc"></canvas></div>
 <div id="propm"><div class="box"><button id="prClose">✕</button><h3 id="prTitle"></h3><div id="prRename"><input id="prName" maxlength="14" placeholder="Nome do jogador"><button id="prSave">Salvar nome</button></div><div id="prList"></div><div id="prGroups"></div></div></div>
@@ -482,9 +484,9 @@ const elig=p=>canBuildAt(p,T[p.pos])?[T[p.pos]]:[];
 function hud(){$('top').innerHTML=P.map((p,i)=>`<div class="chip ${i==cur?'on':''} ${p.out?'out':''}" style="--pc:${PC[i]}" data-pid="${i}"><i></i><div><b>${esc(p.name)}</b><span>${fm(p.money)}</span></div><em>${T.filter(t=>t.own==i).length}🏠</em></div>`).join('');
  [...$('top').children].forEach(el=>el.onclick=()=>showProps(P[+el.dataset.pid]));
  const p=P[cur],h=p&&ctl(p)&&!busy&&!over&&!tradeCtx;
- $('roll').disabled=!(h&&(ph=='roll'||(ph=='act'&&p.again&&!p.out)));$('roll').classList.toggle('again',!!(h&&ph=='act'&&p.again&&!p.out));$('buy').disabled=!(h&&ph=='act'&&pend&&p.money>=pend.pr);$('buy').textContent=pend?'🛒 Comprar '+fm(pend.pr):'🛒 Comprar';
+ $('roll').disabled=!(h&&(ph=='roll'||(ph=='act'&&p.again&&!p.out)));$('roll').classList.toggle('again',!!(h&&ph=='act'&&p.again&&!p.out));$('buy').disabled=!(h&&ph=='act'&&pend&&p.money>=buyPrice(pend));$('buy').textContent=pend?'🛒 Comprar '+fm(buyPrice(pend)):'🛒 Comprar';$('fal').disabled=!(h&&(ph=='roll'||ph=='act')&&!busy);
  $('build').disabled=!(h&&ph=='act'&&elig(p).length);$('trade').disabled=!(h&&ph=='act'&&T.some(t=>t.pr&&t.own>=0&&!t.mort&&(t.own==p.id||!P[t.own].out)));$('end').disabled=!(h&&ph=='act'&&!p.again)}
-function tinfo(i){const t=T[i],o=t.own>=0?P[t.own]:null;$('tile').style.setProperty('--tc',t.col||'#888');$('tile').innerHTML=`<b>📍 ${t.n}</b><span>${t.ty=='F'?'🏦 Cofre: '+fm(vault)+' ':''}${t.pr?fm(t.pr):''}${t.h?' · '+(t.h==5?'Arranha-céu':t.h+' casa(s)'):''}</span><em>${o?'Dono: '+esc(o.name):t.pr?'À venda':''}</em>`}
+function tinfo(i){const t=T[i],o=t.own>=0?P[t.own]:null;$('tile').style.setProperty('--tc',t.col||'#888');$('tile').innerHTML=`<b>📍 ${t.n}</b><span>${t.ty=='F'?'🏦 Cofre: '+fm(vault)+' ':''}${t.pr?fm(t.pr):''}${t.h?' · '+(t.h==5?'Arranha-céu':t.h+' casa(s)'):''}</span><em>${o?'Dono: '+esc(o.name):t.pr?(t.mort?'🏦 Banco · hipotecada · compra por '+fm(redeemVal(t)):'À venda'):''}</em>`}
 async function hop(p,to,hg=.35,du=300){tinfo(p.pos);const a=p.m.position.clone(),[bx,bz]=lane(p.pos,p.id);p.m.rotation.y=Math.atan2(bx-a.x,bz-a.z);
  const u=p.m.userData,sd=p.sd=-(p.sd||1);await anim(du,t=>{p.m.position.set(a.x+(bx-a.x)*t,.26+Math.sin(t*Math.PI)*hg,a.z+(bz-a.z)*t);const w=Math.sin(t*Math.PI)*.45*sd;u.ll.rotation.x=w;u.rl.rotation.x=-w;u.la.rotation.x=-w;u.ra.rotation.x=w});u.ll.rotation.x=u.rl.rotation.x=u.la.rotation.x=u.ra.rotation.x=0;beep(300+p.pos*8,.06)}
 async function walk(p,n){const d=n<0?-1:1;for(let i=0;i<Math.abs(n);i++){p.pos=(p.pos+d+48)%48;if(d>0&&p.pos==0){p.money+=200;log(p.name+' passou pela Largada +R$ 200');payDividends(p)}await hop(p,T[p.pos].pos);if(d>0&&p.pos==0)fireworks()}}
@@ -492,11 +494,11 @@ async function sendJail(p){p.pos=12;p.jail=2;await hop(p,T[12].pos,4,1000)}
 function osign(t,p){const c=document.createElement('canvas');c.width=360;c.height=170;const x=c.getContext('2d');x.fillStyle=t.mort?'#555':PC[p.id];x.strokeStyle='#fff';x.lineWidth=8;x.beginPath();x.moveTo(30,6);x.lineTo(330,6);x.quadraticCurveTo(354,6,354,30);x.lineTo(354,102);x.quadraticCurveTo(354,126,330,126);x.lineTo(205,126);x.lineTo(180,164);x.lineTo(155,126);x.lineTo(30,126);x.quadraticCurveTo(6,126,6,102);x.lineTo(6,30);x.quadraticCurveTo(6,6,30,6);x.closePath();x.fill();x.stroke();
  x.fillStyle='#fff';x.textAlign='center';x.font='bold 22px sans-serif';x.fillText(t.mort?'HIPOTECADA':'DONO',180,40);x.font='bold 46px sans-serif';x.fillText(p.name,180,100,320);
  const q=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c)}));q.center.set(.5,0);q.scale.set(1.5,.71,1);q.position.set(t.pos.x+Math.sin(rt(t.i))*.4,2.6,t.pos.z+Math.cos(rt(t.i))*.4);return q}
-function setOwner(t,id){t.own=id;if(t.mk)S.remove(t.mk);t.mk=null;if(id>=0){t.mk=osign(t,P[id]);S.add(t.mk)}}
+function setOwner(t,id){t.own=id;if(t.mk)S.remove(t.mk);t.mk=null;if(id>=0){t.mk=osign(t,P[id]);S.add(t.mk)}else if(t.mort){t.mk=osign(t,{id:-1,name:'BANCO'});S.add(t.mk)}}
 async function show(t){if(t.hg)S.remove(t.hg);const g=t.hg=new THREE.Group();g.position.copy(t.pos);g.rotation.y=rt(t.i);S.add(g);let last;
  if(t.h==5){last=tower();last.position.set(0,.26,-.55);g.add(last)}else for(let i=0;i<t.h;i++){const o=house(i);o.position.set(-.7+.47*i,.26,-.55);g.add(o);last=o}
  if(last)await anim(t.h==5?800:350,q=>last.scale.setScalar(Math.max(.01,q<.7?q/.7*1.15:1.15-.15*(q-.7)/.3)))}
-async function buy(p){const t=T[p.pos];await pay(p,t.pr,null,'Compra: '+t.n);setOwner(t,p.id);if(mkt){if(t.ty=='U')mkt.ev.u++;if(t.ty=='R')mkt.ev.r++}tinfo(p.pos);pend=null;beep(660);log(p.name+' comprou '+t.n)}
+async function buy(p){const t=T[p.pos],bk=t.own<0&&t.mort,price=buyPrice(t);await pay(p,price,null,(bk?'Resgate e compra do banco: ':'Compra: ')+t.n);if(p.out)return;t.mort=0;setOwner(t,p.id);if(mkt){if(t.ty=='U')mkt.ev.u++;if(t.ty=='R')mkt.ev.r++}tinfo(p.pos);pend=null;beep(660);log(p.name+' comprou '+t.n)}
 async function build(p){const t=elig(p)[0];if(!t)return;await pay(p,hc(t),null,'Obra: '+t.n);t.h++;p.builtTurn=p.turns;if(mkt)mkt.ev.h++;beep(520);log(p.name+(t.h==5?' construiu um HOTEL em ':' construiu casa em ')+t.n);await show(t)}
 const rent=(t,d)=>t.ty=='R'?25*2**(T.filter(u=>u.ty=='R'&&u.own==t.own).length-1):t.ty=='U'?d*(T.filter(u=>u.ty=='U'&&u.own==t.own).length>1?10:4):Math.round(t.pr/10)*[1,3,6,10,14,22][t.h];
 $('pkeys').innerHTML=[1,2,3,4,5,6,7,8,9,'✕',0,'✓'].map(k=>`<span class="${k=='✕'?'r':k=='✓'?'g':''}" data-k="${k}">${k}</span>`).join('');
@@ -542,10 +544,10 @@ async function pos(p,amt,desc,to){const e=$('pos'),c=$('pcard');c.style.backgrou
 async function pay(p,amt,to,d,vlt){
  if(p.money<amt){const ok=await resolveDebt(p,amt);if(!ok||p.money<amt){await bust(p,to);return}}
  await pos(p,amt,d||'Pagamento',to);const a=p.money;await anim(500,t=>{p.money=Math.round(a-amt*t);hud()});p.money=Math.round((a-amt)*100)/100;if(to)to.money=Math.round((to.money+amt)*100)/100;if(vlt)vaultAdd(amt);beep(180);hud()}
-async function bust(p,to){if(p.out)return;const nP=T.filter(t=>t.own==p.id).length,debt=r2((p.loans||[]).filter(l=>l.st=='ativo').reduce((a,l)=>a+l.bal,0)/100);
+async function bust(p,to,vol){if(p.out)return;const nP=T.filter(t=>t.own==p.id).length,debt=r2((p.loans||[]).filter(l=>l.st=='ativo').reduce((a,l)=>a+l.bal,0)/100);
  p.out=true;champ.order.push(p.id);p.m.visible=false;p.money=0;p.shares=[];p.cost=[];p.plan=false;(p.loans||[]).forEach(l=>{if(l.st=='ativo')l.st='baixado'});log(p.name+' faliu!');beep(120,.4);hud();
- T.forEach(t=>{if(t.own==p.id){setOwner(t,to?to.id:-1);if(!to){t.h=0;t.mort=0;show(t)}}});
- await showBankrupt(p,to,nP,debt);
+ T.forEach(t=>{if(t.own==p.id){if(to){setOwner(t,to.id)}else{t.h=0;t.mort=t.pr?mortVal(t):0;show(t);setOwner(t,-1)}}});
+ await showBankrupt(p,to,nP,debt,vol);
  const al=P.filter(x=>!x.out);if(al.length==1){over=true;clearCurrent();log('🏆 '+al[0].name+' venceu!');hud();setTimeout(()=>showChampion(al[0]),1200)}}
 let debtWait=null;
 const SLOTS=0,SKEY=i=>'aracaju3d_slot'+i;
@@ -584,6 +586,7 @@ const MORT_PCT=50; /* fixo: 50% do preço original de compra — não configurá
 const r2=n=>Math.round(n*100)/100;
 const mortVal=t=>Math.round(t.pr*MORT_PCT)/100;
 const redeemVal=t=>Math.round(t.mort*(100+CFG.redeemFee))/100;
+const buyPrice=t=>(t.own<0&&t.mort)?redeemVal(t):t.pr;
 let lseq=0;
 const loansOf=p=>p.loans||(p.loans=[]);
 const activeLoans=p=>loansOf(p).filter(l=>l.st=='ativo');
@@ -891,7 +894,7 @@ const REVES=[
  ['Acidente doméstico','Vá ao Hospital (consulta R$ 90)',p=>hospitalTrip(p,90)],
 ];
 async function land(p,d){const t=T[p.pos];if(mkt&&/Beira Mar|Orla/.test(t.n))mkt.ev.o++;
- if(t.pr){if(t.own<0){pend=t;log(t.n+' está à venda por '+fm(t.pr));if(p.cpu&&p.money>t.pr+120){await showDeed(t,7000);await buy(p)}}
+ if(t.pr){if(t.own<0){pend=t;const bp=buyPrice(t);log(t.mort?'🏦 '+t.n+' é do BANCO (hipotecada): quem comprar resgata a hipoteca por '+fm(bp):t.n+' está à venda por '+fm(t.pr));if(p.cpu&&p.money>bp+120){await showDeed(t,7000);await buy(p)}}
   else if(t.own!=p.id&&t.mort){log(t.n+' está HIPOTECADA: sem cobrança de aluguel')}
   else if(t.own!=p.id){const r=rent(t,d),o=P[t.own];log(`${p.name} paga ${fm(r)} de aluguel a ${o.name}`);await pay(p,r,o,'Aluguel: '+t.n)}}
  else if(t.ty=='T'){await pay(p,t.i==4?150:100,null,'Imposto',true);log(p.name+' pagou imposto')}
@@ -919,7 +922,8 @@ function showCardModal(p,four,t,onPick,auto,onFlip,spec){const rev=t.n=='Revés'
  $('cardm').style.display='flex';return{flip:flipTo}}
 function hideCardModal(){$('cardm').style.display='none'}
 const ICONS={'Cia. do Trem':'🚆','Cia. de Ônibus':'🚌','Cia. do Metrô':'🚇','Travessia da Barra':'⛴️','Cia. do Bonde':'🚋','Cia. Aérea':'✈️','Cia. de Luz':'💡','Cia. de Água':'🚰','Cia. de Gás':'🔥'};
-function deedHTML(t){const hip=fm(Math.round(t.pr/2));
+function deedHTML(t){const h0=deedHTML0(t);return(t.own<0&&t.mort)?'<div class="bk-note">🏦 <b>Imóvel do BANCO (hipotecado)</b><br>Ao comprar, você resgata a hipoteca por <b>'+fm(redeemVal(t))+'</b> (valor da hipoteca '+fm(t.mort)+' + '+CFG.redeemFee+'%).</div>'+h0:h0}
+function deedHTML0(t){const hip=fm(Math.round(t.pr/2));
  if(t.ty=='p'){const b=Math.round(t.pr/10),m=[3,6,10,14,22],lab=['C/ 1 CASA','C/ 2 CASAS','C/ 3 CASAS','C/ 4 CASAS','C/ HOTEL'],c=hc(t),n=parseInt(t.col.slice(1),16),dk=((n>>16)*299+((n>>8)&255)*587+(n&255)*114)/1000>150;
   return`<div class="deed" style="--dc:${t.col}"><div class="dh" style="${dk?'color:#111':''}">${esc(t.n)}</div><div class="dprice"><span>Preço</span><span>${fm(t.pr)}</span></div><div class="dr dctr"><span>Aluguel</span><span>${fm(b)}</span></div>${lab.map((l,i)=>`<div class="dr"><span>${l}</span><span>${fm(b*m[i])}</span></div>`).join('')}<div class="dsep"></div><div class="dr"><span>Cada casa</span><span>${fm(c)}</span></div><div class="dr"><span>Hotel</span><span>${fm(c)}</span></div><div class="dsep"></div><div class="dr"><span>Hipoteca</span><span>${hip}</span></div></div>`}
  const R=t.ty=='R',cnt=T.filter(u=>u.ty==t.ty).length;
@@ -983,14 +987,14 @@ let seed=1,room=null,online=false,me,started=false,myAct=[],aseq=0,mic=null,iamh
 const rnd=()=>{seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 const ctl=p=>online?p.rid===me:!p.cpu;
 const Q=[],waits=[],seen={},vc={},ICE={iceServers:[{urls:'stun:stun.l.google.com:19302'}]};
-async function doBuy(){const p=P[cur];if(!pend||p.money<pend.pr)return;busy=true;hud();if(!ctl(p))await showDeed(pend,4500);await buy(p);busy=false;hud()}
+async function doBuy(){const p=P[cur];if(!pend||p.money<buyPrice(pend))return;busy=true;hud();if(!ctl(p))await showDeed(pend,4500);await buy(p);busy=false;hud()}
 async function doBuild(){busy=true;hud();await build(P[cur]);busy=false;hud()}
 function act(c,v){Q.push({s:online?me:undefined,c,v});if(online){myAct=[...myAct,[++aseq,c,v==null?0:v]].slice(-10);try{const q=room.presence({A:myAct});q&&q.catch&&q.catch(()=>{})}catch(e){console.error(e)}}}
-const okp=e=>e.c=='r'?(ph=='roll'||(ph=='act'&&P[cur].again&&!P[cur].out)):(e.c=='f'||e.c=='v')?ph!='wait':e.c=='e'?(ph=='act'&&!P[cur].again):ph=='act';
+const okp=e=>e.c=='r'?(ph=='roll'||(ph=='act'&&P[cur].again&&!P[cur].out)):(e.c=='f'||e.c=='v')?ph!='wait':e.c=='e'?(ph=='act'&&!P[cur].again):e.c=='x'?(ph=='roll'||ph=='act'):ph=='act';
 setInterval(()=>{if(P.length)for(let wi=waits.length-1;wi>=0;wi--){const w=waits[wi],qi=Q.findIndex(e=>e.s===(w.rid!==undefined?w.rid:P[cur].rid)&&e.c==w.code);if(qi>=0){const e=Q.splice(qi,1)[0];waits.splice(wi,1);w.res(e.v)}}
  if(P.length&&cardWait){const i=Q.findIndex(e=>e.s===P[cur].rid&&(e.c=='k'||e.c=='kc'));if(i>=0){const e=Q.splice(i,1)[0],cw=cardWait;if(e.c=='k'){cw.pick=cw.four[e.v];cw.flip&&cw.flip(e.v)}else if(cw.pick){cardWait=null;hideCardModal();cw.res(cw.pick)}}}
  if(P.length&&debtWait){const i=Q.findIndex(e=>e.s===P[cur].rid&&e.c=='m');if(i>=0){const e=Q.splice(i,1)[0],dw=debtWait;debtWait=null;dw.res(e.v)}}
- if(busy||over||!P.length)return;const i=Q.findIndex(e=>e.s===P[cur].rid&&okp(e));if(i<0){while(Q.length>30)Q.shift();return}const e=Q.splice(i,1)[0];({r:doRoll,e:end,b:doBuy,c:doBuild,t:doTrade,k:()=>{},kc:()=>{},qz:()=>{},hp:()=>{},bv:()=>{},v:doBolsaAct,m:()=>{},f:doFin,lb:()=>{},g:doOffer,go:()=>{}})[e.c](e.v)},150);
+ if(busy||over||!P.length)return;const i=Q.findIndex(e=>e.s===P[cur].rid&&okp(e));if(i<0){while(Q.length>30)Q.shift();return}const e=Q.splice(i,1)[0];({r:doRoll,e:end,b:doBuy,c:doBuild,t:doTrade,k:()=>{},kc:()=>{},qz:()=>{},hp:()=>{},bv:()=>{},x:doDeclare,v:doBolsaAct,m:()=>{},f:doFin,lb:()=>{},g:doOffer,go:()=>{}})[e.c](e.v)},150);
 const SHP=['#e53935','#1e88e5','#43a047','#fb8c00','#8e24aa','#00acc1','#fdd835','#6d4c41','#ec407a','#546e7a','#7cb342','#ff7043','#3949ab','#00897b'];
 const cdist=(a,b)=>{const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),x=p(a),y=p(b);return Math.hypot(x[0]-y[0],x[1]-y[1],x[2]-y[2])};
 const sameCol=(a,b)=>cdist(a,b)<70;
@@ -1193,7 +1197,7 @@ function buildManual(){const secs=[['m1','🎯 Objetivo'],['m2','🧩 Preparaç�
 <section id="m10"><h4>🏁 10. Largada, Imposto e Banco</h4><ul><li>🏁 <b>Largada</b>: toda vez que passa ou para, ganha <b>R$ 200</b> e estouram fogos!</li><li>💰 <b>Imposto</b>: pague R$ 150. Esse dinheiro vai para o <b>cofre do Parque</b>!</li><li>🌳 <b>Parque da Sementeira</b>: quem <b>parar</b> nele leva <b>todo o dinheiro do cofre</b> (impostos, multas, fiança e cartas de Revés que foram pagos ao banco; o cofre guarda no máximo R$ 1.000) e ainda responde a um <b>Quiz de Aracaju</b>: acertou, ganha <b>R$ 100</b>; errou, não perde nada. O computador também responde (às vezes acerta, às vezes erra).</li><li>🏦 <b>Banco</b>: se você <b>parar</b> nela, o banco oferece um <b>empréstimo especial de 5%</b>. Você aceita ou recusa. Só passar por ela não oferece nada. A casa Banco não se compra.</li></ul></section>
 <section id="m11"><h4>🏦 11. Empréstimos e Hipotecas</h4><p>O botão roxo <b>EMPRÉSTIMOS &amp; HIPOTECAS</b> abre o painel financeiro (você pode consultar a qualquer hora; as operações só na sua vez, com o jogo parado).</p><div class="mn-rule"><b>💳 Empréstimo</b><ul><li>Juros simples de <b>10%</b>, cobrados uma única vez (no Banco: <b>5%</b>).</li><li>Pago em <b>3 parcelas</b>, uma a cada 3 jogadas suas.</li><li>No máximo <b>2 empréstimos</b> ao mesmo tempo, dentro do limite de crédito (R$ 2.000).</li></ul></div><div class="mn-ill">💰 R$ 1.000 → +10% = R$ 1.100 → 3 parcelas<small>Você pode pagar uma parcela ou quitar tudo antes</small></div><div class="mn-rule"><b>🏠 Hipoteca</b><ul><li>Você recebe <b>50% do preço original</b> da propriedade.</li><li>Ela continua sua, mas fica <b>HIPOTECADA</b>: sem aluguel, sem construir e sem vender.</li><li>Para <b>resgatar</b>, você paga o que recebeu <b>+10%</b>.</li><li>Propriedade com casas ou hotel não pode ser hipotecada.</li></ul></div><div class="mn-ill">🏠 → 💰 → 🔒 → (resgate +10%) → 🏠<small>botão laranja = Hipotecar · botão azul = Resgatar</small></div><p>No painel você vê os empréstimos de <b>cada jogador</b>, separados por grupo.</p></section>
 <section id="m12"><h4>🤝 12. Negociar</h4><ul><li><b>💰 Vender</b>: escolha a propriedade e o jogador, depois digite o preço na maquininha. O botão vermelho <b>✕ apaga</b> o último número; com o visor vazio, ele <b>desiste</b>. O verde <b>✓ confirma</b>.</li><li><b>🛒 Fazer oferta de compra</b>: escolha a propriedade de outro jogador e digite quanto você oferece. O dono <b>aceita ou recusa</b>. Se aceitar, você paga na maquininha.</li></ul><p>O computador <b>nem sempre aceita</b>: ele recusa propostas ruins e diz até quanto pagaria ou quanto quer receber.</p></section>
-<section id="m13"><h4>⚠️ 13. Dívidas e falência</h4><p>Ninguém fica com <b>saldo negativo</b>. Se você precisar pagar e não tiver dinheiro, abre a <b>tela de Dívida</b> com as opções:</p><ul><li>💳 pegar um empréstimo;</li><li>🏛️ hipotecar uma propriedade;</li><li>🏦 vender uma propriedade ao banco (50% do preço);</li><li>🤝 vender a um jogador (você digita o preço);</li><li>💀 declarar falência.</li></ul><p>Se sobrar dinheiro, fica no seu saldo. Se não conseguir pagar, você vai à <b>falência</b>: seu boneco sai do tabuleiro.</p></section>
+<section id="m13"><h4>⚠️ 13. Dívidas e falência</h4><p>Ninguém fica com <b>saldo negativo</b>. Se você precisar pagar e não tiver dinheiro, abre a <b>tela de Dívida</b> com as opções:</p><ul><li>💳 pegar um empréstimo;</li><li>🏛️ hipotecar uma propriedade;</li><li>🏦 vender uma propriedade ao banco (50% do preço);</li><li>🤝 vender a um jogador (você digita o preço);</li><li>💀 declarar falência.</li></ul><p>Se sobrar dinheiro, fica no seu saldo. Se não conseguir pagar, você vai à <b>falência</b>: seu boneco sai do tabuleiro.</p><div class="mn-warn">💀 <b>Decretar falência por vontade própria:</b> na sua vez, toque em <b>💀 Falência</b>. Seus imóveis ficam <b>hipotecados no banco</b> (sem casas e hotéis). Quem parar neles pode <b>resgatar a hipoteca e comprar</b> o imóvel, pagando o valor da hipoteca + 10%.</div></section>
 <section id="m14"><h4>🤖 14. O computador (CPU)</h4><p>Quando o computador pega empréstimo, hipoteca, paga parcela, quita ou resgata, aparece um <b>aviso azul 🤖</b> na tela por <b>7 segundos</b> (toque em <b>Continuar ▶</b> para seguir mais rápido).</p></section>
 <section id="m15"><h4>🎥 15. Câmera e botões</h4><ul><li>Arraste: gira · dois dedos: move · pinça ou roda do mouse: zoom.</li><li>🗺️ visão geral · ⬇️ de cima · 🎯 seguir o jogador · ↻ girar · 🚁 modo drone (voa em cima do boneco).</li><li>🎙️ voz · 💬 chat (online) · 💾 salvar · 📖 este manual · 🚪 sair.</li><li>A <b>câmera redonda</b> mostra os dados rolando no centro do tabuleiro.</li></ul></section>
 <section id="m16"><h4>🌐 16. Jogar online com amigos</h4><ul><li>Crie uma sala, toque em <b>📨 Convidar</b> e mande o link pelo WhatsApp.</li><li>Para começar, é preciso <b>pelo menos 2 jogadores</b> (1 convidado ou 1 CPU).</li><li>Use o <b>chat</b> (💬) e a <b>voz</b> (🎙️) durante a partida.</li><li>O anfitrião pode <b>salvar</b> a partida e continuar depois.</li><li><b>Jogar em outro aparelho:</b> depois de salvar com 💾, toque em <b>🔑 Gerar código</b> (ou no 🔑 ao lado do salvamento em <b>Carregar partida salva</b>). No outro aparelho, digite o código em <b>Carregar com código</b>.</li></ul></section>
@@ -1205,7 +1209,8 @@ let manBuilt=false;
 function showManual(){if(!manBuilt){$('manBody').innerHTML=buildManual();manBuilt=true;$('manBody').onclick=e=>{const b=e.target.closest('[data-go]');if(b){const el=document.getElementById(b.dataset.go),body=$('manBody'),nav=body.querySelector('.mn-nav');if(el){const top=Math.max(0,el.offsetTop-(nav?nav.offsetHeight:0)-6);body.scrollTo({top,behavior:'smooth'});el.classList.remove('mn-flash');void el.offsetWidth;el.classList.add('mn-flash')}}}}$('manM').style.display='flex'}
 $('manBtn').onclick=showManual;$('c10').onclick=showManual;$('manClose').onclick=()=>{$('manM').style.display='none'};
 
-(function(){const b=$('bot'),f=()=>document.documentElement.style.setProperty('--botH',b.offsetHeight+'px');if(window.ResizeObserver)new ResizeObserver(f).observe(b);addEventListener('resize',f);f()})();
+function measureBot(){const b=$('bot'),r=b.getBoundingClientRect(),h=r.height>0?Math.max(0,innerHeight-r.top):0;document.documentElement.style.setProperty('--botH',Math.round(h)+'px')}
+(function(){const b=$('bot');if(window.ResizeObserver){const ro=new ResizeObserver(measureBot);ro.observe(b);ro.observe($('btns'));ro.observe($('log'))}['resize','orientationchange'].forEach(e=>addEventListener(e,measureBot));if(window.visualViewport)visualViewport.addEventListener('resize',measureBot);setInterval(measureBot,600);measureBot()})();
 /*CHAMP*/
 /* ===== TELA DE CAMPEÃO ===== */
 (function(){const st=document.createElement('style');st.textContent=`
@@ -1305,14 +1310,18 @@ $('champBtn').onclick=()=>{$('champ').classList.add('show');champFx(true);$('cha
 @media (prefers-reduced-motion:reduce){#bkr *{animation-duration:.01s!important;animation-delay:0s!important}}
 `;document.head.appendChild(st)})();
 const bkr={raf:0,tm:0,fin:true};
-function bkrHTML(p,to,n,debt){const fall=['💸','🧾','🪙','📉','💔'].flatMap((e,i)=>[0,1,2].map(k=>`<span class="bk-fall" style="left:${(i*19+k*7+5)%96}%;animation-duration:${6+((i+k)%4)*2}s;animation-delay:${-((i*3+k*2)%7)}s">${e}</span>`)).join('');
- return fall+`<div class="bk-cl">🌧️</div><div class="bk-stamp">FALÊNCIA</div><div class="bk-av"><div class="bk-face">${champFace(p)}</div><span class="bk-tear">💧</span></div><div class="bk-name">${p.cpu?'🤖 ':''}${esc(p.name)}</div><div class="bk-msg">não aguentou as dívidas e <b>deixou a partida</b>.</div><div class="bk-card">${n?`🏠 <b>${n}</b> propriedade(s) ${to?'foram para <b>'+esc(to.name)+'</b>':'voltaram para o <b>banco</b>'}.`:'Não tinha nenhuma propriedade.'}${debt>0?`<br>💳 Empréstimos em aberto: <b>${fm(debt)}</b> (baixados).`:''}</div><div class="bk-bar"><i></i></div><button id="bkGo">Continuar ▶</button>`}
+function bkrHTML(p,to,n,debt,vol){const fall=['💸','🧾','🪙','📉','💔'].flatMap((e,i)=>[0,1,2].map(k=>`<span class="bk-fall" style="left:${(i*19+k*7+5)%96}%;animation-duration:${6+((i+k)%4)*2}s;animation-delay:${-((i*3+k*2)%7)}s">${e}</span>`)).join('');
+ return fall+`<div class="bk-cl">🌧️</div><div class="bk-stamp">FALÊNCIA</div><div class="bk-av"><div class="bk-face">${champFace(p)}</div><span class="bk-tear">💧</span></div><div class="bk-name">${p.cpu?'🤖 ':''}${esc(p.name)}</div><div class="bk-msg">${vol?'decretou falência e':'não aguentou as dívidas e'} <b>deixou a partida</b>.</div><div class="bk-card">${n?`🏠 <b>${n}</b> propriedade(s) ${to?'foram para <b>'+esc(to.name)+'</b>.':'ficaram <b>hipotecadas no banco</b>. Quem parar nelas poderá resgatar a hipoteca e comprar.'}`:'Não tinha nenhuma propriedade.'}${debt>0?`<br>💳 Empréstimos em aberto: <b>${fm(debt)}</b> (baixados).`:''}</div><div class="bk-bar"><i></i></div><button id="bkGo">Continuar ▶</button>`}
 function rainFx(on){const c=$('bkrFx');if(bkr.raf){cancelAnimationFrame(bkr.raf);bkr.raf=0}if(!on)return;const x=c.getContext('2d'),dpr=Math.min(2,window.devicePixelRatio||1);c.width=innerWidth*dpr;c.height=innerHeight*dpr;
  const drops=Array.from({length:140},()=>({x:Math.random()*c.width,y:Math.random()*c.height,l:(10+Math.random()*18)*dpr,v:(14+Math.random()*10)*dpr}));
  const loop=()=>{x.clearRect(0,0,c.width,c.height);x.strokeStyle='rgba(170,195,235,.45)';x.lineWidth=1.4*dpr;x.beginPath();drops.forEach(d=>{x.moveTo(d.x,d.y);x.lineTo(d.x-d.l*.25,d.y+d.l);d.y+=d.v;d.x-=d.v*.25;if(d.y>c.height){d.y=-d.l;d.x=Math.random()*c.width*1.2}});x.stroke();bkr.raf=requestAnimationFrame(loop)};bkr.raf=requestAnimationFrame(loop)}
 function sadSound(){[392,370,349].forEach((f,i)=>setTimeout(()=>beep(f,.38),i*420));setTimeout(()=>beep(311,1),1260);setTimeout(()=>beep(80,.9),500);try{navigator.vibrate&&navigator.vibrate([300,100,300])}catch(e){}}
-function showBankrupt(p,to,nProps,debt){return new Promise(res=>{bkr.fin=false;const done=()=>{if(bkr.fin)return;bkr.fin=true;clearTimeout(bkr.tm);$('bkGo').onclick=null;$('bkr').classList.remove('show');rainFx(false);res()};
- $('bkrBody').innerHTML=bkrHTML(p,to,nProps,debt);$('bkr').classList.add('show');$('bkr').scrollTop=0;rainFx(true);sadSound();$('bkGo').onclick=done;bkr.tm=setTimeout(done,8500)})}
+function showBankrupt(p,to,nProps,debt,vol){return new Promise(res=>{bkr.fin=false;const done=()=>{if(bkr.fin)return;bkr.fin=true;clearTimeout(bkr.tm);$('bkGo').onclick=null;$('bkr').classList.remove('show');rainFx(false);res()};
+ $('bkrBody').innerHTML=bkrHTML(p,to,nProps,debt,vol);$('bkr').classList.add('show');$('bkr').scrollTop=0;rainFx(true);sadSound();$('bkGo').onclick=done;bkr.tm=setTimeout(done,8500)})}
+async function doDeclare(v){const p=P[cur];if(!v||!p||p.out||over||opsDone.has(v.id))return;opsDone.add(v.id);busy=true;hud();log('💀 '+p.name+' decretou falência!');await bust(p,null,true);busy=false;hud();if(!over)end()}
+$('fal').onclick=async()=>{const p=online?P.find(x=>x.rid===me):P[cur];if(!p||p.out)return;if(!finCan(p)){toast('⚠️ Só dá para decretar falência na sua vez, com o jogo parado.');return}
+ const n=T.filter(t=>t.own==p.id).length;
+ if(await confirmBox('💀 Decretar falência?','<p>Você vai <b>sair da partida agora</b>, e os outros jogadores continuam.</p><ul style="margin:8px 0 8px 18px;padding:0;font-size:13px;line-height:1.5"><li>Seus <b>'+n+' imóvel(is)</b> ficam <b>hipotecados no banco</b> (sem casas e hotéis).</li><li>Quem parar neles poderá <b>resgatar a hipoteca e comprar</b> o imóvel.</li><li>Seus empréstimos são baixados e suas ações perdidas.</li></ul><p><b>Isso não pode ser desfeito.</b></p>','💀 Sim, decretar falência','Continuar jogando')){if(!finCan(p))return;act('x',{id:Date.now()+'-'+Math.random().toString(36).slice(2,6)})}};
 const fsOn=()=>document.fullscreenElement||document.webkitFullscreenElement;
 async function toggleFS(){try{if(fsOn()){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else{const el=document.documentElement,f=el.requestFullscreen||el.webkitRequestFullscreen;if(!f){toast('📱 Neste aparelho (iPhone), toque em Compartilhar › “Adicionar à Tela de Início” para jogar em tela cheia.');return}await f.call(el)}}catch(e){toast('⚠️ Tela cheia bloqueada aqui. Abra o jogo direto pelo endereço do site para usá-la.')}}
 ['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{const on=!!fsOn();$('c11').textContent=on?'🗗':'⛶';$('c11').title=on?'Sair da tela cheia':'Tela cheia';$('fsMenu').textContent=on?'🗗 Sair da tela cheia':'⛶ Tela cheia'}));
